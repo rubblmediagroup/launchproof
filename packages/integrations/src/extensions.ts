@@ -1,3 +1,4 @@
+import { LAUNCHPROOF_VERSION } from '@launchproof/contracts';
 import type {
   Analyzer,
   AnalyzerContext,
@@ -15,7 +16,7 @@ import type {
 } from '@launchproof/contracts';
 import { createEvidence, stableId } from '@launchproof/evidence';
 
-const VERSION = '1.0.0-rc.1';
+const VERSION = LAUNCHPROOF_VERSION;
 const MANIFEST_API = 'launchproof.dev/v1' as const;
 const EVIDENCE_SCHEMA = 'launchproof-evidence/v1' as const;
 const EXTENSION_ID = /^[a-z0-9][a-z0-9._-]{1,127}$/;
