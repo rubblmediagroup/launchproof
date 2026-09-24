@@ -3,6 +3,7 @@ import { rateLimit } from '../../../lib/rate-limit';
 import { publicError } from '../../../lib/request';
 import { publicScenarioReport, SHOWCASE_TARGETS } from '../../../lib/showcase';
 
+// launchproof:public
 export async function GET(request: Request) {
   const limit = rateLimit(request, 'public-report');
   if (!limit.ok)
