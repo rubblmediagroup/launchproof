@@ -14,13 +14,13 @@
     "@launchproof/core": "0.2.0",
     "@launchproof/evidence": "0.2.0",
     "@launchproof/graph": "0.2.0",
+    "@launchproof/integrations": "0.2.0",
     "@launchproof/policies": "0.2.0",
     "@launchproof/scoring": "0.2.0",
     "@launchproof/standards": "0.2.0",
-    "next": "^15.5.3",
+    "next": "^15.5.26",
     "react": "^19.1.1",
-    "react-dom": "^19.1.1",
-    "@launchproof/integrations": "0.2.0"
+    "react-dom": "^19.1.1"
   },
   "devDependencies": {
     "@types/react": "^19.1.12",
