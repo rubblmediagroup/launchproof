@@ -19,6 +19,7 @@
     "self:analyze": "tsx packages/cli/src/bin.ts analyze . --json .launchproof/self-report.json",
     "verify:rc:windows": "node scripts/verify-release.mjs",
     "verify:release": "node scripts/verify-release.mjs --e2e --docker",
+    "verify:scenarios": "node scripts/assert-release-scenarios.mjs",
     "build:cli": "npm run build -w @launchproof/cli",
     "pack:cli": "npm pack -w @launchproof/cli --dry-run",
     "verify:rc": "node scripts/verify-release.mjs"
