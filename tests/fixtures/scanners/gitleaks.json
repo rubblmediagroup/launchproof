@@ -1,0 +1,10 @@
+[
+  {
+    "RuleID": "launchproof-fixture-secret",
+    "Description": "Release fixture credential",
+    "File": ".env.fixture",
+    "StartLine": 1,
+    "Secret": "LP_TEST_SECRET_DO_NOT_RETAIN",
+    "Fingerprint": "launchproof-fixture-fingerprint"
+  }
+]

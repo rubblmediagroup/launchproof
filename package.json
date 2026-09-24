@@ -22,7 +22,9 @@
     "verify:scenarios": "node scripts/assert-release-scenarios.mjs",
     "build:cli": "npm run build -w @launchproof/cli",
     "pack:cli": "npm pack -w @launchproof/cli --dry-run",
-    "verify:rc": "node scripts/verify-release.mjs"
+    "verify:rc": "node scripts/verify-release.mjs",
+    "verify:scanners": "node scripts/assert-scanner-fixtures.mjs",
+    "verify:isolated-runner": "tsx scripts/verify-isolated-runner.mts"
   },
   "devDependencies": {
     "@eslint/js": "^9.35.0",

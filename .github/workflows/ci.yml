@@ -34,11 +34,21 @@ jobs:
       - run: npm pack -w @launchproof/cli --dry-run
       - name: Runtime dependency audit
         run: npm audit --omit=dev --audit-level=high
+      - name: Scanner fixture contract
+        run: |
+          npm run cli -- analyze scenarios/production-reference \
+            --scanner semgrep-json:tests/fixtures/scanners/semgrep.json \
+            --scanner gitleaks-json:tests/fixtures/scanners/gitleaks.json \
+            --scanner osv-json:tests/fixtures/scanners/osv.json \
+            --scanner trivy-json:tests/fixtures/scanners/trivy.json \
+            --json /tmp/launchproof-scanners.json
+          npm run verify:scanners -- /tmp/launchproof-scanners.json
       - name: Controlled release scenarios
         run: |
           npm run cli -- analyze scenarios/production-reference --json /tmp/launchproof-reference.json
           npm run cli -- analyze scenarios/missing-tenant-authorization --json /tmp/launchproof-regression.json
-          npm run verify:scenarios -- /tmp/launchproof-reference.json /tmp/launchproof-regression.json
+          npm run cli -- analyze scenarios/senten-reference --json /tmp/launchproof-senten.json
+          npm run verify:scenarios -- /tmp/launchproof-reference.json /tmp/launchproof-regression.json /tmp/launchproof-senten.json
       - name: LaunchProof self-analysis
         run: npm run cli -- analyze . --json /tmp/launchproof-self.json
 
@@ -64,6 +74,12 @@ jobs:
         run: docker compose config
       - name: Docker build
         run: docker build -t launchproof-ci .
+      - name: Isolated runner image
+        run: docker build -f tests/fixtures/runner/Dockerfile -t launchproof-runner:ci tests/fixtures/runner
+      - name: Authorized isolated-runner exercise
+        run: |
+          RUNNER_IMAGE="$(docker image inspect launchproof-runner:ci --format '{{.Id}}')"
+          npm run verify:isolated-runner -- "$RUNNER_IMAGE"
 
   windows-desktop:
     name: windows desktop / node-24

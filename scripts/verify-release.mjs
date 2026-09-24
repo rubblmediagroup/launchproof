@@ -56,6 +56,7 @@ function runGate(name, command, commandArgs = []) {
     process.exit(code);
   }
   status(`PASS ${name}`);
+  return { stdout: result.stdout ?? '', stderr: result.stderr ?? '', status: code };
 }
 
 const major = Number(process.versions.node.split('.')[0]);
@@ -109,6 +110,8 @@ runGate('cli-package-dry-run', 'npm', ['pack', '-w', '@launchproof/cli', '--dry-
 
 const referenceReport = join(logRoot, 'production-reference.json');
 const regressionReport = join(logRoot, 'missing-tenant-authorization.json');
+const sentenReport = join(logRoot, 'senten-reference.json');
+const scannerReport = join(logRoot, 'scanner-fixtures.json');
 const selfReport = join(logRoot, 'self-report.json');
 runGate('cli-production-reference', 'npm', [
   'run',
@@ -128,6 +131,41 @@ runGate('cli-tenant-regression', 'npm', [
   '--json',
   regressionReport,
 ]);
+runGate('cli-senten-reference', 'npm', [
+  'run',
+  'cli',
+  '--',
+  'analyze',
+  'scenarios/senten-reference',
+  '--json',
+  sentenReport,
+]);
+runGate('release-scenario-assertions', 'npm', [
+  'run',
+  'verify:scenarios',
+  '--',
+  referenceReport,
+  regressionReport,
+  sentenReport,
+]);
+runGate('scanner-fixture-analysis', 'npm', [
+  'run',
+  'cli',
+  '--',
+  'analyze',
+  'scenarios/production-reference',
+  '--scanner',
+  'semgrep-json:tests/fixtures/scanners/semgrep.json',
+  '--scanner',
+  'gitleaks-json:tests/fixtures/scanners/gitleaks.json',
+  '--scanner',
+  'osv-json:tests/fixtures/scanners/osv.json',
+  '--scanner',
+  'trivy-json:tests/fixtures/scanners/trivy.json',
+  '--json',
+  scannerReport,
+]);
+runGate('scanner-fixture-assertions', 'npm', ['run', 'verify:scanners', '--', scannerReport]);
 runGate('cli-self-analysis', 'npm', ['run', 'cli', '--', 'analyze', '.', '--json', selfReport]);
 
 if (withE2E) {
@@ -139,6 +177,28 @@ if (withDocker) {
   runGate('docker-compose-version', 'docker', ['compose', 'version']);
   runGate('docker-build', 'docker', ['build', '-t', 'launchproof:1.0.0-rc.1', '.']);
   runGate('docker-compose-config', 'docker', ['compose', 'config', '--quiet']);
+  runGate('isolated-runner-image-build', 'docker', [
+    'build',
+    '-f',
+    'tests/fixtures/runner/Dockerfile',
+    '-t',
+    'launchproof-runner:rc',
+    'tests/fixtures/runner',
+  ]);
+  const inspect = runGate('isolated-runner-image-id', 'docker', [
+    'image',
+    'inspect',
+    'launchproof-runner:rc',
+    '--format',
+    '{{.Id}}',
+  ]);
+  const runnerImage = inspect.stdout.trim();
+  runGate('authorized-isolated-runner', 'npm', [
+    'run',
+    'verify:isolated-runner',
+    '--',
+    runnerImage,
+  ]);
 }
 
 console.log('');

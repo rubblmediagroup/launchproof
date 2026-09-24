@@ -1,0 +1,51 @@
+{
+  "schema": "launchproof-evidence/v1",
+  "producer": {
+    "id": "senten",
+    "version": "1.0.0-rc.1"
+  },
+  "repository": {
+    "name": "senten-integration-contract-fixture",
+    "branch": "working-tree",
+    "commit": "WORKTREE"
+  },
+  "generatedAt": "2026-09-24T00:00:00Z",
+  "evidence": [
+    {
+      "id": "senten-fixture-invariant",
+      "kind": "senten.invariant-result",
+      "certainty": "VERIFIED",
+      "title": "Senten fixture invariant satisfied",
+      "description": "Senten fixture reports its declared dependency-boundary invariant as satisfied.",
+      "source": {
+        "path": "senten.architecture.json",
+        "line": 1
+      },
+      "data": {
+        "invariant": "core-boundary"
+      }
+    }
+  ],
+  "claims": [
+    {
+      "id": "senten-fixture-claim",
+      "subject": "architecture",
+      "statement": "The fixture architecture satisfies the declared core boundary.",
+      "scope": [
+        "architecture"
+      ],
+      "evidenceIds": [
+        "senten-fixture-invariant"
+      ],
+      "producer": {
+        "id": "senten",
+        "version": "1.0.0-rc.1"
+      },
+      "certainty": "VERIFIED"
+    }
+  ],
+  "graph": {
+    "nodes": [],
+    "edges": []
+  }
+}

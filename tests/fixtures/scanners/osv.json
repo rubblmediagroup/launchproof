@@ -1,0 +1,22 @@
+{
+  "results": [
+    {
+      "packages": [
+        {
+          "package": {
+            "name": "launchproof-fixture-package",
+            "version": "1.0.0"
+          },
+          "vulnerabilities": [
+            {
+              "id": "OSV-LAUNCHPROOF-FIXTURE",
+              "database_specific": {
+                "severity": "HIGH"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

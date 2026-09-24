@@ -1,0 +1,21 @@
+{
+  "results": [
+    {
+      "check_id": "launchproof.fixture.unsafe-operation",
+      "path": "app/api/example/route.ts",
+      "start": {
+        "line": 12
+      },
+      "extra": {
+        "severity": "ERROR",
+        "message": "Fixture unsafe operation",
+        "metadata": {
+          "launchproof_control": "LP-07",
+          "cwe": [
+            "CWE-89"
+          ]
+        }
+      }
+    }
+  ]
+}
