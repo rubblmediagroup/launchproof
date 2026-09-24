@@ -1,0 +1,22 @@
+{
+  "version": "1.0",
+  "results": [
+    {
+      "check_id": "launchproof.test.eval",
+      "path": "app/api/opportunities/route.ts",
+      "start": {
+        "line": 1
+      },
+      "extra": {
+        "message": "Synthetic unsafe evaluation fixture",
+        "severity": "ERROR",
+        "metadata": {
+          "launchproof_control": "LP-07",
+          "cwe": [
+            "CWE-95"
+          ]
+        }
+      }
+    }
+  ]
+}
