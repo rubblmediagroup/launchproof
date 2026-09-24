@@ -80,7 +80,7 @@ export async function analyzeRepository(
         requirePinnedImage: options.requirePinnedRunnerImage ?? true,
       })
     : undefined;
-  return analyzeSnapshot(snapshot, policy, analyzers, '0.2.0', {
+  return analyzeSnapshot(snapshot, policy, analyzers, '1.0.0-rc.1', {
     ...(runner ? { runner } : {}),
     authorizeDynamicVerification: Boolean(options.authorizeDynamicVerification),
   });
