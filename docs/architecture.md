@@ -1,6 +1,6 @@
 # Architecture
 
-LaunchProof is a modular monorepo. `@launchproof/core` owns normalized contracts, orchestration, report comparison and verification coordination. Static analyzers, scanner adapters and evidence producers emit normalized artifacts. The graph, control engine, Assurance Cases and scoring layer consume those artifacts. Clients are replaceable and never define security conclusions.
+LaunchProof is a modular monorepo. `@launchproof/contracts` owns stable cross-package assurance contracts; `@launchproof/core` owns orchestration, report comparison and verification coordination. Static analyzers, scanner adapters and evidence producers emit normalized artifacts. The graph, control engine, Assurance Cases and scoring layer consume those artifacts. Clients are replaceable and never define security conclusions.
 
 ## Trust boundaries
 
@@ -10,14 +10,17 @@ LaunchProof is a modular monorepo. `@launchproof/core` owns normalized contracts
 4. **Execution boundary:** dynamic verification is represented by `IsolatedRunner`; execution requires policy opt-in plus explicit invocation authorization.
 5. **Intelligence boundary:** model providers receive only data permitted by AI policy; their output cannot mutate controls/cases/release decisions.
 6. **Showcase boundary:** hosted analysis accepts only hard-allowlisted server targets and controlled scenarios.
-7. **Desktop boundary:** the Tauri webview has minimal capabilities and narrow native commands rather than ambient filesystem/process authority.
+7. **Desktop boundary:** the Tauri webview has minimal capabilities and a fixed native-operation allowlist rather than ambient filesystem/process authority.
+8. **Extension boundary:** imported architecture/evidence remains producer-attributed and cannot mint LaunchProof VERIFIED certainty.
 
 ## Dependency direction
 
 ```text
 Web / Desktop / CLI / CI
           ↓
-      Core contracts
+       Core orchestration
+          ↓
+   Stable contracts
           ↓
 Analyzers / Scanner adapters / Evidence producers
           ↓
@@ -33,6 +36,10 @@ Optional Intelligence
 ```
 
 The GUI and CLI consume the same report model. Dynamic runners and model providers are adapters rather than dependencies of deterministic evaluation.
+
+## Intended versus observed architecture
+
+Platform adapters such as Senten may contribute intended architecture. Built-in analyzers contribute observed architecture. The graph package reconciles them deterministically into `MATCHED`, `UNOBSERVED`, `UNDECLARED`, `VIOLATION` and `UNKNOWN` states without turning architectural agreement into an automatic release pass.
 
 ## Extension boundary
 
