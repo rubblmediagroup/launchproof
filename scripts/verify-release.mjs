@@ -104,6 +104,7 @@ runGate('format-check', 'npm', ['run', 'format:check']);
 runGate('lint', 'npm', ['run', 'lint']);
 runGate('typecheck', 'npm', ['run', 'typecheck']);
 runGate('unit-integration-tests', 'npm', ['test']);
+runGate('scanner-fixture-contract', 'npm', ['run', 'verify:scanner-fixtures']);
 runGate('web-production-build', 'npm', ['run', 'build', '-w', '@launchproof/web']);
 runGate('cli-production-build', 'npm', ['run', 'build', '-w', '@launchproof/cli']);
 runGate('cli-package-dry-run', 'npm', ['pack', '-w', '@launchproof/cli', '--dry-run']);
