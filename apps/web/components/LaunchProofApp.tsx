@@ -362,6 +362,7 @@ function Overview({ report }: { report: AnalysisReport }) {
           ))}
         </section>
       )}
+      <DecisionExplainer report={report} />
       <section className="metric-row">
         <article>
           <span>Evidence</span>
@@ -389,6 +390,66 @@ function Overview({ report }: { report: AnalysisReport }) {
         <SystemMap report={report} compact />
       </section>
     </>
+  );
+}
+
+function DecisionExplainer({ report }: { report: AnalysisReport }) {
+  const attention = report.controls.filter((item) =>
+    ['FAIL', 'PARTIAL', 'UNKNOWN'].includes(item.outcome),
+  );
+  if (!attention.length) return null;
+
+  return (
+    <section className="decision-explainer">
+      <div className="section-head">
+        <div>
+          <p className="eyebrow">WHY THIS DECISION</p>
+          <h2>Release decisions remain traceable to controls and evidence.</h2>
+          <p>
+            LaunchProof does not collapse uncertainty into a pass. The controls below are the
+            highest-value places to inspect before release.
+          </p>
+        </div>
+      </div>
+      <div className="decision-list">
+        {attention.slice(0, 8).map((item) => {
+          const evidence = report.evidence.filter((entry) => item.evidenceIds.includes(entry.id));
+          const findings = report.findings.filter((entry) => item.findingIds.includes(entry.id));
+          return (
+            <article key={item.control.id}>
+              <header>
+                <code>{item.control.id}</code>
+                <span className={`outcome ${item.outcome.toLowerCase()}`}>{item.outcome}</span>
+              </header>
+              <h3>{item.control.title}</h3>
+              <p>{item.rationale}</p>
+              <div className="decision-evidence">
+                <b>Observed evidence</b>
+                <span>
+                  {evidence.length
+                    ? evidence
+                        .slice(0, 3)
+                        .map((entry) => entry.title)
+                        .join(' · ')
+                    : 'No supporting evidence was attached to this control.'}
+                </span>
+              </div>
+              <div className="decision-evidence">
+                <b>Findings</b>
+                <span>
+                  {findings.length
+                    ? findings
+                        .slice(0, 3)
+                        .map((entry) => entry.title)
+                        .join(' · ')
+                    : 'No normalized finding is attached; uncertainty may still remain.'}
+                </span>
+              </div>
+            </article>
+          );
+        })}
+      </div>
+    </section>
   );
 }
 
@@ -561,6 +622,10 @@ function NodeInspector({ node, report }: { node: GraphNode | null; report: Analy
   );
 }
 
+function normalizeArchitectureLabel(value: string) {
+  return value.trim().toLowerCase().replace(/\\s+/g, ' ');
+}
+
 function SentenView({ report }: { report: AnalysisReport }) {
   const sentenEvidence = report.evidence.filter(
     (item) =>
@@ -577,6 +642,21 @@ function SentenView({ report }: { report: AnalysisReport }) {
   );
   const sentenEdges = report.graph.edges.filter(
     (edge) => edge.metadata?.importedFrom === 'senten' || edge.metadata?.intended === true,
+  );
+  const intendedNodes = sentenNodes.filter((node) => node.metadata.intended === true);
+  const observedNodes = report.graph.nodes.filter(
+    (node) => node.metadata.intended !== true && node.metadata.importedFrom !== 'senten',
+  );
+  const observedLabels = new Set(observedNodes.map((node) => normalizeArchitectureLabel(node.label)));
+  const intendedLabels = new Set(intendedNodes.map((node) => normalizeArchitectureLabel(node.label)));
+  const matchedNodes = intendedNodes.filter((node) =>
+    observedLabels.has(normalizeArchitectureLabel(node.label)),
+  );
+  const intendedOnly = intendedNodes.filter(
+    (node) => !observedLabels.has(normalizeArchitectureLabel(node.label)),
+  );
+  const observedOnly = observedNodes.filter(
+    (node) => !intendedLabels.has(normalizeArchitectureLabel(node.label)),
   );
   if (!sentenEvidence.length)
     return (
@@ -624,10 +704,44 @@ function SentenView({ report }: { report: AnalysisReport }) {
           <b>{sentenEdges.length}</b>
         </article>
         <article>
-          <span>Runtime VERIFIED</span>
-          <b>{sentenEvidence.filter((item) => item.certainty === 'VERIFIED').length}</b>
+          <span>Matched architecture</span>
+          <b>{matchedNodes.length}</b>
         </article>
       </div>
+      <div className="architecture-diff">
+        <article>
+          <span className="diff-state matched">MATCHED</span>
+          <h3>{matchedNodes.length} intended component(s) observed</h3>
+          <p>
+            {matchedNodes.length
+              ? matchedNodes.map((node) => node.label).slice(0, 8).join(' · ')
+              : 'No intended component label currently correlates with an observed graph node.'}
+          </p>
+        </article>
+        <article>
+          <span className="diff-state unobserved">UNOBSERVED</span>
+          <h3>{intendedOnly.length} intended component(s) not observed</h3>
+          <p>
+            {intendedOnly.length
+              ? intendedOnly.map((node) => node.label).slice(0, 8).join(' · ')
+              : 'Every imported intended component has an observed label match.'}
+          </p>
+        </article>
+        <article>
+          <span className="diff-state undeclared">UNDECLARED</span>
+          <h3>{observedOnly.length} observed component(s) not declared by Senten</h3>
+          <p>
+            {observedOnly.length
+              ? observedOnly.map((node) => node.label).slice(0, 8).join(' · ')
+              : 'No additional observed components were found.'}
+          </p>
+        </article>
+      </div>
+      <p className="correlation-note">
+        Architecture correlation is deterministic label matching over normalized graph nodes. A
+        match is evidence of correspondence, not proof that an invariant is satisfied. Runtime
+        verification remains separate.
+      </p>
       <div className="evidence-list">
         {sentenEvidence.map((item) => (
           <article key={item.id}>
