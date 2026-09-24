@@ -33,8 +33,10 @@ jobs:
       - run: npm run build -w @launchproof/web
       - run: npm run build -w @launchproof/cli
       - run: npm pack -w @launchproof/cli --dry-run
-      - name: CLI smoke test
+      - name: CLI reference smoke test
         run: npm run cli -- analyze scenarios/production-reference --json /tmp/launchproof-report.json
+      - name: CLI Senten contract smoke test
+        run: npm run cli -- analyze scenarios/senten-reference --json /tmp/launchproof-senten-report.json
 
   release-surfaces:
     name: release surfaces / node-24
