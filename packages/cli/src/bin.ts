@@ -3,7 +3,12 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { analyzeRepository, formatReport, toSarif } from './index.js';
 
+const CLI_VERSION = '1.0.0-rc.1';
 const args = process.argv.slice(2);
+if (args.includes('--version') || args.includes('-v')) {
+  console.log(CLI_VERSION);
+  process.exit(0);
+}
 const command = args.shift() ?? 'analyze';
 const target = !args[0]?.startsWith('--') ? (args.shift() ?? '.') : '.';
 function values(flag: string) {
