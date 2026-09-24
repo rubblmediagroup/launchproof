@@ -4,6 +4,7 @@ import { analyzeAuthorizedScenario } from '../../../lib/showcase';
 
 const encoder = new TextEncoder();
 
+// launchproof:public
 export async function POST(request: Request) {
   const limit = rateLimit(request, 'analyze-stream');
   if (!limit.ok)
