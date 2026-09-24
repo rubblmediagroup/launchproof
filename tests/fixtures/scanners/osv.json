@@ -1,0 +1,23 @@
+{
+  "results": [
+    {
+      "packages": [
+        {
+          "package": {
+            "name": "synthetic-package",
+            "version": "1.0.0"
+          },
+          "vulnerabilities": [
+            {
+              "id": "GHSA-LP-FIXTURE",
+              "summary": "Synthetic dependency advisory",
+              "database_specific": {
+                "severity": "HIGH"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
