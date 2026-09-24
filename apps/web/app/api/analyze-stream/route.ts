@@ -2,7 +2,6 @@ import { rateLimit } from '../../../lib/rate-limit';
 import { publicError, readSmallJson } from '../../../lib/request';
 import { analyzeAuthorizedScenario } from '../../../lib/showcase';
 
-export const launchProofPublic = true;
 const encoder = new TextEncoder();
 
 export async function POST(request: Request) {
