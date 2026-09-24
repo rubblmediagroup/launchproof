@@ -583,7 +583,7 @@ footer code {
   display: flex;
   justify-content: space-between;
   gap: 30px;
-  align-items: end;
+  align-items: flex-end;
   padding: 32px 0;
 }
 .section-head h2 {
