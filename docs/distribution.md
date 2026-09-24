@@ -20,7 +20,6 @@ The hosted-compatible UI analyzes only authorized targets and controlled scenari
 
 There is one normalized LaunchProof report model across surfaces, and no surface requires LaunchProof cloud or an LLM.
 
-
 ## Self-hosted UI repository analysis
 
 The public Showcase surface never accepts arbitrary filesystem paths. A self-hosted operator can opt into bounded local repository analysis by setting both:
