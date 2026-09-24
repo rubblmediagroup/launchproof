@@ -15,15 +15,22 @@ for (const kind of ['scanner.semgrep', 'scanner.gitleaks', 'scanner.osv', 'scann
   if (!kinds.has(kind)) failures.push(`missing normalized evidence kind: ${kind}`);
 }
 const receipts = evidence.filter((item) => item.kind === 'scanner.result-import');
-if (receipts.length < 4) failures.push(`expected four scanner import receipts; received ${receipts.length}`);
-if (!findings.some((item) => item.ruleId === 'LP-06'))
+if (receipts.length < 4) {
+  failures.push(`expected four scanner import receipts; received ${receipts.length}`);
+}
+if (!findings.some((item) => item.ruleId === 'LP-06')) {
   failures.push('Gitleaks fixture did not normalize to LP-06');
-if (!findings.some((item) => item.ruleId === 'LP-08'))
+}
+if (!findings.some((item) => item.ruleId === 'LP-08')) {
   failures.push('dependency vulnerability fixtures did not normalize to LP-08');
-if (raw.includes('LP_TEST_SECRET_DO_NOT_RETAIN'))
+}
+if (raw.includes('LP_TEST_SECRET_DO_NOT_RETAIN')) {
   failures.push('scanner normalization retained the fixture secret value');
+}
 if (failures.length) {
   for (const failure of failures) console.error(`FAIL: ${failure}`);
   process.exit(2);
 }
-console.log(`PASS: scanner fixtures normalized; evidence=${evidence.length}, findings=${findings.length}, receipts=${receipts.length}`);
+console.log(
+  `PASS: scanner fixtures normalized; evidence=${evidence.length}, findings=${findings.length}, receipts=${receipts.length}`,
+);

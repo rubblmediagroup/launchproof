@@ -36,4 +36,6 @@ if (result.exitCode !== 0 || result.timedOut || result.stdout !== 'launchproof-i
   console.error(JSON.stringify(result, null, 2));
   process.exit(2);
 }
-console.log(`PASS: isolated runner completed with network=none using pinned image ${image.slice(0, 20)}…`);
+console.log(
+  `PASS: isolated runner completed with network=none using pinned image ${image.slice(0, 20)}…`,
+);

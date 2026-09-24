@@ -37,15 +37,26 @@ if (!regressionText.includes('tenant') && !regressionText.includes('authorizatio
 }
 
 const sentenKinds = new Set((senten.evidence ?? []).map((item) => item.kind));
-if (!sentenKinds.has('platform.senten')) failures.push('Senten scenario was not structurally detected');
-if (!sentenKinds.has('senten.architecture-declaration'))
+if (!sentenKinds.has('platform.senten')) {
+  failures.push('Senten scenario was not structurally detected');
+}
+if (!sentenKinds.has('senten.architecture-declaration')) {
   failures.push('Senten intended architecture was not imported');
-if (!sentenKinds.has('senten.evidence-import'))
+}
+if (!sentenKinds.has('senten.evidence-import')) {
   failures.push('Senten evidence interchange envelope was not imported');
-if ((senten.evidence ?? []).some((item) => item.kind?.startsWith('imported.') && item.certainty === 'VERIFIED'))
+}
+if (
+  (senten.evidence ?? []).some(
+    (item) => item.kind?.startsWith('imported.') && item.certainty === 'VERIFIED',
+  )
+) {
   failures.push('external Senten evidence was incorrectly promoted to LaunchProof VERIFIED');
+}
 const intendedNodes = (senten.graph?.nodes ?? []).filter((node) => node.metadata?.intended === true);
-if (intendedNodes.length === 0) failures.push('Senten scenario produced no intended architecture nodes');
+if (intendedNodes.length === 0) {
+  failures.push('Senten scenario produced no intended architecture nodes');
+}
 
 if (failures.length) {
   for (const failure of failures) console.error(`FAIL: ${failure}`);

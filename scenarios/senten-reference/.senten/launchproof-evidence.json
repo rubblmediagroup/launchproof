@@ -31,12 +31,8 @@
       "id": "senten-fixture-claim",
       "subject": "architecture",
       "statement": "The fixture architecture satisfies the declared core boundary.",
-      "scope": [
-        "architecture"
-      ],
-      "evidenceIds": [
-        "senten-fixture-invariant"
-      ],
+      "scope": ["architecture"],
+      "evidenceIds": ["senten-fixture-invariant"],
       "producer": {
         "id": "senten",
         "version": "1.0.0-rc.1"

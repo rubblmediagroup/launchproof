@@ -11,9 +11,7 @@
         "message": "Fixture unsafe operation",
         "metadata": {
           "launchproof_control": "LP-07",
-          "cwe": [
-            "CWE-89"
-          ]
+          "cwe": ["CWE-89"]
         }
       }
     }
