@@ -79,7 +79,7 @@ export async function analyzeAuthorizedScenario(
     new TypeScriptNextAnalyzer(),
     ...analyzersFromPlatformAdapters(snapshot, [new SentenPlatformAdapter()]),
   ];
-  return analyzeSnapshot(snapshot, policy, analyzers, '0.2.0', {
+  return analyzeSnapshot(snapshot, policy, analyzers, '1.0.0-rc.1', {
     ...(onProgress ? { onProgress } : {}),
   });
 }
