@@ -12,8 +12,20 @@ const nextConfig: NextConfig = {
     '@launchproof/policies',
     '@launchproof/scoring',
     '@launchproof/standards',
+    '@launchproof/contracts',
+    '@launchproof/integrations',
+    '@launchproof/intelligence',
   ],
   outputFileTracingRoot: path.resolve(process.cwd(), '../..'),
+  webpack(config) {
+    config.resolve.extensionAlias = {
+      ...(config.resolve.extensionAlias ?? {}),
+      '.js': ['.ts', '.tsx', '.js'],
+      '.mjs': ['.mts', '.mjs'],
+      '.cjs': ['.cts', '.cjs'],
+    };
+    return config;
+  },
   async headers() {
     return [
       {
