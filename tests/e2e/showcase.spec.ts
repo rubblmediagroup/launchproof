@@ -15,3 +15,25 @@ test('controlled regression comparison explains changed artifacts', async ({ pag
   await expect(page.getByText('CONTROLLED REGRESSION')).toBeVisible();
   await expect(page.getByText(/changed controls/i)).toBeVisible();
 });
+
+
+test('release decision explains uncertain and failed controls', async ({ page }) => {
+  await page.goto('/');
+  await page
+    .locator('select')
+    .selectOption('missing-tenant-authorization');
+  await page.getByRole('button', { name: /start deterministic analysis/i }).click();
+  await expect(page.getByText('WHY THIS DECISION')).toBeVisible();
+  await expect(page.getByText(/release decisions remain traceable/i)).toBeVisible();
+});
+
+test('Senten integration renders intended-vs-observed correspondence', async ({ page }) => {
+  await page.goto('/');
+  await page.locator('select').selectOption('senten-reference');
+  await page.getByRole('button', { name: /start deterministic analysis/i }).click();
+  await page.getByRole('button', { name: 'senten' }).click();
+  await expect(page.getByText(/intended architecture meets observed assurance/i)).toBeVisible();
+  await expect(page.getByText('MATCHED')).toBeVisible();
+  await expect(page.getByText('UNOBSERVED')).toBeVisible();
+  await expect(page.getByText('UNDECLARED')).toBeVisible();
+});
