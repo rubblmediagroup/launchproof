@@ -2,8 +2,9 @@
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { analyzeRepository, formatReport, toSarif } from './index.js';
+import { LAUNCHPROOF_VERSION } from '@launchproof/core';
 
-const CLI_VERSION = '1.0.0-rc.1';
+const CLI_VERSION = LAUNCHPROOF_VERSION;
 const args = process.argv.slice(2);
 if (args.includes('--version') || args.includes('-v')) {
   console.log(CLI_VERSION);
