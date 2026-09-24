@@ -1,8 +1,31 @@
 import { describe, expect, it } from 'vitest';
 import { rateLimit } from '../../apps/web/lib/rate-limit';
 import { publicError } from '../../apps/web/lib/request';
+import { localAnalysisCapability } from '../../apps/web/lib/local-analysis';
 
 describe('public web security boundary', () => {
+  it('keeps local repository analysis disabled unless both local mode and a repository root are configured', () => {
+    const previousMode = process.env.LAUNCHPROOF_LOCAL_MODE;
+    const previousRoot = process.env.LAUNCHPROOF_REPOSITORY_ROOT;
+    delete process.env.LAUNCHPROOF_LOCAL_MODE;
+    delete process.env.LAUNCHPROOF_REPOSITORY_ROOT;
+    expect(localAnalysisCapability().enabled).toBe(false);
+
+    process.env.LAUNCHPROOF_LOCAL_MODE = '1';
+    expect(localAnalysisCapability().enabled).toBe(false);
+
+    process.env.LAUNCHPROOF_REPOSITORY_ROOT = '/tmp/projects';
+    expect(localAnalysisCapability()).toEqual({
+      enabled: true,
+      repositoryRootConfigured: true,
+    });
+
+    if (previousMode === undefined) delete process.env.LAUNCHPROOF_LOCAL_MODE;
+    else process.env.LAUNCHPROOF_LOCAL_MODE = previousMode;
+    if (previousRoot === undefined) delete process.env.LAUNCHPROOF_REPOSITORY_ROOT;
+    else process.env.LAUNCHPROOF_REPOSITORY_ROOT = previousRoot;
+  });
+
   it('does not trust x-forwarded-for unless the host explicitly configures that header', () => {
     const previous = process.env.LAUNCHPROOF_CLIENT_IP_HEADER;
     delete process.env.LAUNCHPROOF_CLIENT_IP_HEADER;
