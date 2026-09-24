@@ -672,7 +672,9 @@ export class TypeScriptNextAnalyzer implements Analyzer {
         sourceFile.statements.some(
           (statement) =>
             ts.isVariableStatement(statement) &&
-            statement.modifiers?.some((modifier) => modifier.kind === ts.SyntaxKind.ExportKeyword) &&
+            statement.modifiers?.some(
+              (modifier) => modifier.kind === ts.SyntaxKind.ExportKeyword,
+            ) &&
             statement.declarationList.declarations.some(
               (declaration) =>
                 ts.isIdentifier(declaration.name) &&
