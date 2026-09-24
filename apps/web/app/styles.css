@@ -1096,3 +1096,37 @@ footer code {
   color: #9bc4f6;
   white-space: nowrap;
 }
+
+.source-switch {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.source-switch button {
+  background: transparent;
+  color: #7f91a9;
+  border: 1px solid #263247;
+  padding: 10px;
+  font:
+    700 10px ui-monospace,
+    monospace;
+  letter-spacing: 0.08em;
+}
+.source-switch button.selected {
+  background: #132033;
+  color: #dcecff;
+  border-color: #496f9f;
+}
+.source-switch button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.analyze-card input {
+  width: 100%;
+  margin: 10px 0 14px;
+  padding: 13px;
+  background: #070a0f;
+  color: #e8edf5;
+  border: 1px solid #263247;
+}
