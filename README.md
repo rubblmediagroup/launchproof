@@ -16,7 +16,7 @@ The product is built around three rules:
 
 ## Status
 
-**v0.2 implementation candidate.** The full PRD architecture is represented in the repository, with deepest implementation for TypeScript/JavaScript, Next.js, React, Node.js and Supabase-aware applications.
+**LaunchProof 1.0 release candidate.** The v0.2 architecture has been promoted into the first stable-release program: product UI, Senten interoperability, release automation, distribution and verification gates are being hardened before the `v1.0.0` tag.
 
 | Capability                                                             | Status                              |
 | ---------------------------------------------------------------------- | ----------------------------------- |
@@ -228,6 +228,8 @@ scenarios/          controlled source fixtures
 
 ## Verification
 
+LaunchProof does not treat implementation as release verification. The `v1.0.0` tag remains gated by the acceptance matrix in [`docs/v1-release-plan.md`](docs/v1-release-plan.md).
+
 Before a release claim, run:
 
 ```bash
@@ -253,6 +255,6 @@ LaunchProof is a flagship ThomasDSCX Labs project. Any public badge/report must 
 
 ## Extensibility and Senten
 
-LaunchProof Core is platform-agnostic. v0.2 defines versioned language/framework/platform/evidence-importer contracts rather than teaching Core about every ecosystem. Senten is the first official platform adapter: LaunchProof can detect `senten.architecture.json`, render intended architecture/invariants, and import commit-bound `launchproof-evidence/v1` artifacts without trusting Senten to mark LaunchProof controls as passed. See [`docs/senten-integration.md`](docs/senten-integration.md).
+LaunchProof Core is platform-agnostic. LaunchProof 1.0 defines versioned language/framework/platform/evidence-importer contracts rather than teaching Core about every ecosystem. Senten is the first official platform adapter: LaunchProof can detect `senten.architecture.json`, render intended architecture/invariants, and import commit-bound `launchproof-evidence/v1` artifacts without trusting Senten to mark LaunchProof controls as passed. See [`docs/senten-integration.md`](docs/senten-integration.md).
 
 LaunchProof Desktop also exposes a narrow allowlisted native-operation bridge for Senten/Git/Docker diagnostics. It deliberately does **not** expose a free-form terminal or arbitrary shell execution to the webview.
