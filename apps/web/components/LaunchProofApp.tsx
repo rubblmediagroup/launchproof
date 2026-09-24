@@ -258,6 +258,18 @@ function ComparisonBanner({ data }: { data: ReportComparison }) {
   );
 }
 
+function exportReport(report: AnalysisReport) {
+  const blob = new Blob([JSON.stringify(report, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const anchor = document.createElement('a');
+  anchor.href = url;
+  anchor.download = `launchproof-${report.provenance.commit || 'worktree'}.json`;
+  document.body.appendChild(anchor);
+  anchor.click();
+  anchor.remove();
+  URL.revokeObjectURL(url);
+}
+
 function Report({
   report,
   view,
@@ -294,6 +306,9 @@ function Report({
             {item}
           </button>
         ))}
+        <button className="export-report" onClick={() => exportReport(report)}>
+          export JSON
+        </button>
       </nav>
       {view === 'overview' && <Overview report={report} />}
       {view === 'system' && <SystemMap report={report} />}
