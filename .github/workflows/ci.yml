@@ -30,6 +30,7 @@ jobs:
       - run: npm run lint
       - run: npm run typecheck
       - run: npm test
+      - run: npm run verify:scanner-fixtures
       - run: npm run build -w @launchproof/web
       - run: npm run build -w @launchproof/cli
       - run: npm pack -w @launchproof/cli --dry-run
