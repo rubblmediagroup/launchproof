@@ -550,7 +550,7 @@ function SystemMap({ report, compact = false }: { report: AnalysisReport; compac
                 </g>
               );
             })}
-            {report.graph.nodes.map((node, index) => {
+            {report.graph.nodes.map((node) => {
               const pos = positions.get(node.id)!;
               return (
                 <g
