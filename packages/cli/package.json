@@ -1,0 +1,25 @@
+{
+  "name": "@launchproof/cli",
+  "version": "0.2.0",
+  "private": false,
+  "type": "module",
+  "bin": {
+    "launchproof": "./dist/bin.js"
+  },
+  "dependencies": {},
+  "license": "Apache-2.0",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": "^24.0.0 || ^26.0.0"
+  },
+  "scripts": {
+    "build": "node scripts/build.mjs"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

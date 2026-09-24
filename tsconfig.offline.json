@@ -1,0 +1,29 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "baseUrl": ".",
+    "paths": {
+      "@launchproof/core": ["packages/core/src/index.ts"],
+      "@launchproof/evidence": ["packages/evidence/src/index.ts"],
+      "@launchproof/graph": ["packages/graph/src/index.ts"],
+      "@launchproof/standards": ["packages/standards/src/index.ts"],
+      "@launchproof/analyzers": ["packages/analyzers/src/index.ts"],
+      "@launchproof/assurance": ["packages/assurance/src/index.ts"],
+      "@launchproof/scoring": ["packages/scoring/src/index.ts"],
+      "@launchproof/intelligence": ["packages/intelligence/src/index.ts"],
+      "@launchproof/integrations": ["packages/integrations/src/index.ts"]
+    }
+  },
+  "include": [
+    "packages/core/src/**/*.ts",
+    "packages/evidence/src/**/*.ts",
+    "packages/graph/src/**/*.ts",
+    "packages/standards/src/**/*.ts",
+    "packages/analyzers/src/**/*.ts",
+    "packages/assurance/src/**/*.ts",
+    "packages/scoring/src/**/*.ts",
+    "packages/intelligence/src/**/*.ts",
+    "packages/integrations/src/**/*.ts"
+  ]
+}

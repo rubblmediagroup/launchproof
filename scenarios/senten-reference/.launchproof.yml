@@ -1,0 +1,21 @@
+version: 1
+assurance:
+  requiredDomains: [architecture, quality]
+security:
+  failOnSeverity: high
+  requireNoDetectedSecrets: true
+tenancy:
+  required: false
+testing:
+  requireTestFiles: false
+production:
+  requireReleaseProvenance: true
+releaseGates:
+  blockOnFailedAssuranceCase: true
+  blockOnCriticalFinding: true
+  minimumCoverage: 20
+ai:
+  dataPolicy: local-only
+verification:
+  enabled: false
+  commands: []

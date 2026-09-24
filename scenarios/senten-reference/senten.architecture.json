@@ -1,0 +1,23 @@
+{
+  "schema": "senten.application-ir/v0.1",
+  "version": "0.1",
+  "modules": [
+    { "id": "cli", "name": "Senten CLI", "type": "interface" },
+    { "id": "core", "name": "Senten Core", "type": "engine" },
+    { "id": "extensions", "name": "Extension Protocol", "type": "extension-boundary" }
+  ],
+  "dependencies": [
+    { "from": "cli", "to": "core", "type": "uses" },
+    { "from": "core", "to": "extensions", "type": "loads-through-contract" }
+  ],
+  "invariants": [
+    {
+      "id": "extension-boundary",
+      "statement": "Extensions contribute through the declared extension protocol rather than mutating core state directly."
+    },
+    {
+      "id": "deterministic-provenance",
+      "statement": "Architecture state retains deterministic merge and provenance metadata."
+    }
+  ]
+}

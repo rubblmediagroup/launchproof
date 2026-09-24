@@ -1,0 +1,22 @@
+services:
+  launchproof:
+    build:
+      context: .
+      target: runtime
+    ports:
+      - '127.0.0.1:3000:3000'
+    environment:
+      NODE_ENV: production
+      NEXT_TELEMETRY_DISABLED: '1'
+    read_only: true
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=64m
+      - /app/apps/web/.next/cache:rw,noexec,nosuid,size=64m
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    pids_limit: 256
+    mem_limit: 768m
+    cpus: 1.5
+    restart: unless-stopped

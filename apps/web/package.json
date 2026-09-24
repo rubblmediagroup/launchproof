@@ -1,0 +1,29 @@
+{
+  "name": "@launchproof/web",
+  "version": "0.2.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@launchproof/analyzers": "0.2.0",
+    "@launchproof/assurance": "0.2.0",
+    "@launchproof/core": "0.2.0",
+    "@launchproof/evidence": "0.2.0",
+    "@launchproof/graph": "0.2.0",
+    "@launchproof/policies": "0.2.0",
+    "@launchproof/scoring": "0.2.0",
+    "@launchproof/standards": "0.2.0",
+    "next": "^15.5.3",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "@launchproof/integrations": "0.2.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.1.12",
+    "@types/react-dom": "^19.1.9"
+  }
+}

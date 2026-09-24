@@ -1,0 +1,12 @@
+{
+  "name": "@launchproof/scoring",
+  "version": "0.2.0",
+  "private": true,
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "dependencies": {
+    "@launchproof/policies": "0.2.0",
+    "@launchproof/contracts": "0.2.0"
+  }
+}

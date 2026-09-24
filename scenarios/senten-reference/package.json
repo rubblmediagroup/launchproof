@@ -1,0 +1,7 @@
+{
+  "name": "senten-integration-contract-fixture",
+  "private": true,
+  "devDependencies": {
+    "senten": "1.0.0-rc.3"
+  }
+}

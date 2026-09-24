@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; style-src 'self'; script-src 'self'; connect-src 'self' ipc: http://ipc.localhost"
+    />
+    <title>LaunchProof Desktop</title>
+    <link rel="stylesheet" href="./desktop.css" />
+  </head>
+  <body>
+    <main>
+      <header>
+        <div class="mark">LP</div>
+        <div>
+          <h1>LaunchProof Desktop</h1>
+          <p>Local assurance console · narrow native boundary</p>
+        </div>
+      </header>
+      <section class="card">
+        <label for="repo">Repository path</label>
+        <div class="row">
+          <input
+            id="repo"
+            autocomplete="off"
+            spellcheck="false"
+            placeholder="C:\\Projects\\senten"
+          /><button id="validate">Validate</button>
+        </div>
+        <p id="path-status" class="muted">No repository selected.</p>
+      </section>
+      <section class="card">
+        <div class="heading">
+          <div>
+            <span class="eyebrow">SENTEN</span>
+            <h2>Approved operations</h2>
+          </div>
+          <span class="badge">No arbitrary shell</span>
+        </div>
+        <div id="operations" class="operations"></div>
+      </section>
+      <section class="card output-card">
+        <div class="heading">
+          <h2>Native output</h2>
+          <button id="clear" class="quiet">Clear</button>
+        </div>
+        <pre id="output">Select a repository and run an approved operation.</pre>
+      </section>
+    </main>
+    <script src="./app.js"></script>
+  </body>
+</html>

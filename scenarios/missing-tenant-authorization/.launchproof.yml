@@ -1,0 +1,8 @@
+version: 1
+assurance: { requiredDomains: [security, architecture, testing, production] }
+security: { failOnSeverity: high, requireNoDetectedSecrets: true }
+tenancy: { required: true }
+testing: { requireTestFiles: true }
+production: { requireReleaseProvenance: true }
+releaseGates: { blockOnFailedAssuranceCase: true, blockOnCriticalFinding: true }
+ai: { dataPolicy: local-only }

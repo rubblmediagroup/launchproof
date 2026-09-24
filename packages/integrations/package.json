@@ -1,0 +1,11 @@
+{
+  "name": "@launchproof/integrations",
+  "version": "0.2.0",
+  "type": "module",
+  "exports": "./src/index.ts",
+  "dependencies": {
+    "@launchproof/evidence": "0.2.0",
+    "@launchproof/contracts": "0.2.0"
+  },
+  "private": true
+}

@@ -1,0 +1,41 @@
+{
+  "files": [],
+  "references": [
+    {
+      "path": "packages/contracts"
+    },
+    {
+      "path": "packages/core"
+    },
+    {
+      "path": "packages/evidence"
+    },
+    {
+      "path": "packages/graph"
+    },
+    {
+      "path": "packages/standards"
+    },
+    {
+      "path": "packages/policies"
+    },
+    {
+      "path": "packages/analyzers"
+    },
+    {
+      "path": "packages/assurance"
+    },
+    {
+      "path": "packages/scoring"
+    },
+    {
+      "path": "packages/intelligence"
+    },
+    {
+      "path": "packages/integrations"
+    },
+    {
+      "path": "packages/cli"
+    }
+  ]
+}

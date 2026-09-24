@@ -1,0 +1,15 @@
+{
+  "name": "@launchproof/core",
+  "version": "0.2.0",
+  "private": true,
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "dependencies": {
+    "@launchproof/evidence": "0.2.0",
+    "@launchproof/graph": "0.2.0",
+    "@launchproof/assurance": "0.2.0",
+    "@launchproof/scoring": "0.2.0",
+    "@launchproof/contracts": "0.2.0"
+  }
+}
