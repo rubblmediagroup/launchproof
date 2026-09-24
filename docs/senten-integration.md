@@ -1,6 +1,6 @@
 # Senten integration
 
-Status: **Implemented as an experimental v0.2 extension contract.** Native desktop command execution remains a release-candidate machine checkpoint.
+Status: **First-class LaunchProof 1.0 integration candidate.** The normalized extension/evidence contract and web visualization are implemented; native desktop execution remains a real-machine release checkpoint.
 
 LaunchProof and Senten remain independently useful products. LaunchProof does not require Senten, and Senten does not require LaunchProof.
 
@@ -51,7 +51,7 @@ The importer requires the evidence commit to match the analyzed snapshot unless 
 
 ## Extension ABI
 
-Senten is the first official proof of the v1 extension contracts:
+Senten is the first official implementation of the LaunchProof v1 extension contracts:
 
 - `LanguageAdapter`
 - `FrameworkAdapter`
@@ -60,13 +60,13 @@ Senten is the first official proof of the v1 extension contracts:
 - `ExtensionManifest`
 - `AssuranceClaim`
 
-Extension manifests use `apiVersion: launchproof.dev/v1`, declare capabilities and declare a LaunchProof Core compatibility range. A plugin marketplace and remote extension loading are intentionally out of scope for v0.2.
+Extension manifests use `apiVersion: launchproof.dev/v1`, declare capabilities and declare a LaunchProof Core compatibility range. A plugin marketplace and remote extension loading are intentionally out of scope for LaunchProof 1.0.
 
 ## GUI
 
 The LaunchProof web GUI contains a Senten surface. When Senten artifacts exist it shows normalized Senten evidence and intended architecture counts. When none exist, it explicitly says no Senten artifacts were detected rather than fabricating state.
 
-The System Map renders Senten intended nodes alongside LaunchProof-observed nodes because both use the normalized graph contract.
+The System Map renders Senten intended nodes alongside LaunchProof-observed nodes because both use the normalized graph contract. The Senten surface also performs deterministic normalized-label correlation and reports MATCHED, UNOBSERVED and UNDECLARED component sets. These states are correspondence signals, not runtime verification or proof that an invariant is satisfied.
 
 ## Tauri desktop bridge
 
@@ -86,6 +86,6 @@ The webview cannot supply executable names or arbitrary arguments. The Rust laye
 
 On Windows, npm-installed command shims may be `.cmd` files. LaunchProof intentionally does not fall back to arbitrary `cmd /C` execution. Windows packaging of Senten as a native/sidecar-safe executable or equivalent narrowly controlled launcher is a release-candidate checkpoint.
 
-## Future work
+## 1.0 boundary
 
-Post-v0.2 work may add intended-vs-observed graph diff states such as `MATCHED`, `UNOBSERVED`, `UNDECLARED`, `VIOLATION` and `UNKNOWN`. These are not claimed as implemented in v0.2.
+LaunchProof 1.0 includes deterministic `MATCHED`, `UNOBSERVED` and `UNDECLARED` architecture correspondence in the UI. `VIOLATION` remains reserved for a stronger rule-aware comparison backed by explicit evidence; LaunchProof does not infer that an unmatched component is automatically a policy violation. Native Senten execution on Windows remains a release-candidate machine checkpoint.
