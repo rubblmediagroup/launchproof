@@ -53,7 +53,9 @@ if (
 ) {
   failures.push('external Senten evidence was incorrectly promoted to LaunchProof VERIFIED');
 }
-const intendedNodes = (senten.graph?.nodes ?? []).filter((node) => node.metadata?.intended === true);
+const intendedNodes = (senten.graph?.nodes ?? []).filter(
+  (node) => node.metadata?.intended === true,
+);
 if (intendedNodes.length === 0) {
   failures.push('Senten scenario produced no intended architecture nodes');
 }
