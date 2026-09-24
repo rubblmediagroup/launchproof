@@ -1,16 +1,19 @@
-name: release
+name: release-v1
+
 on:
   push:
     tags:
-      - 'v1.*'
+      - 'v1.0.0'
 
 permissions:
   contents: write
   packages: write
+  id-token: write
+  attestations: write
 
 jobs:
   verify:
-    name: verify stable release candidate
+    name: stable verification / node-${{ matrix.node }}
     runs-on: ubuntu-latest
     timeout-minutes: 35
     strategy:
@@ -23,130 +26,129 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
           cache: npm
-          cache-dependency-path: package-lock.json
       - run: npm ci --ignore-scripts
+      - run: node scripts/assert-release-version.mjs 1.0.0
       - run: npm run format:check
       - run: npm run lint
       - run: npm run typecheck
       - run: npm test
-      - run: npm run build -w @launchproof/web
-      - run: npm run build -w @launchproof/cli
-      - run: npm pack -w @launchproof/cli --dry-run
-      - name: Runtime dependency audit
-        run: npm audit --omit=dev --audit-level=high
-      - name: Controlled release scenarios
+      - run: npm audit --omit=dev --audit-level=high
+      - name: Build web and CLI
         run: |
-          npm run cli -- analyze scenarios/production-reference --json .launchproof/reference-report.json
-          npm run cli -- analyze scenarios/missing-tenant-authorization --json .launchproof/regression-report.json
-          npm run verify:scenarios -- .launchproof/reference-report.json .launchproof/regression-report.json
-      - name: Self analysis
-        run: npm run cli -- analyze . --json .launchproof/self-report.json
-      - uses: actions/upload-artifact@v4
-        with:
-          name: self-analysis-node-${{ matrix.node }}
-          path: |
-            .launchproof/reference-report.json
-            .launchproof/regression-report.json
-            .launchproof/self-report.json
+          npm run build -w @launchproof/web
+          npm run build -w @launchproof/cli
+      - name: Controlled release evidence
+        run: |
+          npm run cli -- analyze scenarios/production-reference --json /tmp/reference.json
+          npm run cli -- analyze scenarios/missing-tenant-authorization --json /tmp/regression.json
+          npm run cli -- analyze scenarios/senten-reference --json /tmp/senten.json
+          npm run verify:scenarios -- /tmp/reference.json /tmp/regression.json /tmp/senten.json
+      - name: Scanner adapter evidence
+        run: |
+          npm run cli -- analyze scenarios/production-reference \
+            --scanner semgrep-json:tests/fixtures/scanners/semgrep.json \
+            --scanner gitleaks-json:tests/fixtures/scanners/gitleaks.json \
+            --scanner osv-json:tests/fixtures/scanners/osv.json \
+            --scanner trivy-json:tests/fixtures/scanners/trivy.json \
+            --json /tmp/scanners.json
+          npm run verify:scanners -- /tmp/scanners.json
 
-  browser:
-    name: browser release surface
+  release-surfaces:
+    name: stable release surfaces
     runs-on: ubuntu-latest
-    needs: verify
-    timeout-minutes: 30
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 24
-          cache: npm
-          cache-dependency-path: package-lock.json
-      - run: npm ci --ignore-scripts
-      - run: npx playwright install --with-deps chromium
-      - run: npm run test:e2e
-
-  cli-artifact:
-    name: compiled CLI artifact
-    runs-on: ubuntu-latest
-    needs: verify
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 24
-          cache: npm
-          cache-dependency-path: package-lock.json
-      - run: npm ci --ignore-scripts
-      - run: npm run build -w @launchproof/cli
-      - run: npm pack -w @launchproof/cli
-      - name: Checksums
-        run: sha256sum launchproof-cli-*.tgz > launchproof-cli-SHA256SUMS.txt
-      - uses: actions/upload-artifact@v4
-        with:
-          name: launchproof-cli
-          path: |
-            launchproof-cli-*.tgz
-            launchproof-cli-SHA256SUMS.txt
-
-  container:
-    name: GHCR image
-    runs-on: ubuntu-latest
-    needs: [verify, browser]
-    steps:
-      - uses: actions/checkout@v4
-      - uses: docker/setup-buildx-action@v3
-      - uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      - uses: docker/metadata-action@v5
-        id: meta
-        with:
-          images: ghcr.io/rubblmediagroup/launchproof
-          tags: |
-            type=semver,pattern={{version}}
-            type=semver,pattern={{major}}.{{minor}}
-            type=raw,value=latest
-      - uses: docker/build-push-action@v6
-        with:
-          context: .
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-
-  windows-desktop:
-    name: Windows desktop bundle
-    runs-on: windows-latest
-    needs: verify
     timeout-minutes: 40
+    needs: verify
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 24
           cache: npm
-          cache-dependency-path: package-lock.json
+      - run: npm ci --ignore-scripts
+      - run: node scripts/assert-release-version.mjs 1.0.0
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - run: npm run test:e2e
+      - run: docker compose config --quiet
+      - name: Build self-hosted image
+        run: docker build -t launchproof:1.0.0 .
+      - name: Exercise isolated runner
+        run: |
+          docker build -f tests/fixtures/runner/Dockerfile -t launchproof-runner:release tests/fixtures/runner
+          RUNNER_IMAGE="$(docker image inspect launchproof-runner:release --format '{{.Id}}')"
+          npm run verify:isolated-runner -- "$RUNNER_IMAGE"
+
+  desktop-windows:
+    name: stable desktop / windows
+    runs-on: windows-latest
+    timeout-minutes: 45
+    needs: verify
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
       - uses: dtolnay/rust-toolchain@stable
       - run: npm ci --ignore-scripts
+      - run: node scripts/assert-release-version.mjs 1.0.0
       - run: npm run build -w @launchproof/desktop
       - uses: actions/upload-artifact@v4
         with:
-          name: launchproof-windows-desktop
-          path: apps/desktop/src-tauri/target/release/bundle/**/*
+          name: launchproof-windows
+          path: |
+            apps/desktop/src-tauri/target/release/bundle/msi/*
+            apps/desktop/src-tauri/target/release/bundle/nsis/*
           if-no-files-found: error
 
-  release:
-    name: GitHub Release
+  publish:
+    name: publish GitHub + GHCR
     runs-on: ubuntu-latest
-    needs: [verify, browser, cli-artifact, container, windows-desktop]
+    needs: [verify, release-surfaces, desktop-windows]
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - run: node scripts/assert-release-version.mjs 1.0.0
+      - name: Build CLI package
+        run: |
+          mkdir -p release-artifacts
+          npm run build -w @launchproof/cli
+          npm pack -w @launchproof/cli --pack-destination release-artifacts
+      - name: Generate CycloneDX SBOM
+        run: npm sbom --sbom-format cyclonedx > release-artifacts/launchproof-1.0.0-sbom.cdx.json
+      - name: Generate self-analysis
+        run: npm run cli -- analyze . --json release-artifacts/launchproof-1.0.0-self-analysis.json
       - uses: actions/download-artifact@v4
         with:
-          path: dist
-      - name: Create release
+          name: launchproof-windows
+          path: release-artifacts/windows
+      - name: Checksums
+        shell: bash
+        run: |
+          find release-artifacts -type f ! -name SHA256SUMS -print0 | sort -z | xargs -0 sha256sum > release-artifacts/SHA256SUMS
+      - name: Attest release artifacts
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: 'release-artifacts/**/*'
+      - name: Log in to GHCR
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+      - name: Build and publish container
+        run: |
+          docker build \
+            -t ghcr.io/rubblmediagroup/launchproof:1.0.0 \
+            -t ghcr.io/rubblmediagroup/launchproof:latest .
+          docker push ghcr.io/rubblmediagroup/launchproof:1.0.0
+          docker push ghcr.io/rubblmediagroup/launchproof:latest
+      - name: Publish GitHub Release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh release create "${GITHUB_REF_NAME}" dist/**/* --generate-notes --verify-tag
+          gh release create v1.0.0 \
+            --verify-tag \
+            --title "LaunchProof 1.0.0" \
+            --notes-file docs/v1-release-notes.md \
+            release-artifacts/**
