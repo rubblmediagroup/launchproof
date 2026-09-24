@@ -99,6 +99,7 @@ if (bootstrap) {
   runGate('npm-ci', 'npm', ['ci', '--ignore-scripts']);
 }
 
+runGate('release-version-consistency', 'npm', ['run', 'check:version']);
 runGate('format-check', 'npm', ['run', 'format:check']);
 runGate('lint', 'npm', ['run', 'lint']);
 runGate('typecheck', 'npm', ['run', 'typecheck']);
