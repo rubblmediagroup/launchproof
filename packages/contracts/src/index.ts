@@ -73,11 +73,11 @@ export interface EvidenceInterchangeEnvelope {
 export interface VerificationCommandPolicy {
   id: string;
   command: string;
-  args?: string[];
+  args?: string[] | undefined;
   purpose: string;
-  timeoutMs?: number;
-  network?: 'none' | 'restricted';
-  image?: string;
+  timeoutMs?: number | undefined;
+  network?: 'none' | 'restricted' | undefined;
+  image?: string | undefined;
 }
 
 export interface LaunchProofPolicyShape {
