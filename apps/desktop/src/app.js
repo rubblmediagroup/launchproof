@@ -12,6 +12,7 @@ const operations = [
   ['senten.evidence-test', 'Evidence Test', 'Run Senten deterministic evidence tests.'],
   ['senten.report', 'Report', 'Generate Senten report output.'],
   ['senten.assurance', 'Assurance', 'Inspect Senten assurance output.'],
+  ['senten.version', 'Senten Version', 'Confirm the Senten executable available to LaunchProof.'],
   ['git.status', 'Git Status', 'Read repository Git status.'],
   [
     'docker.version',
