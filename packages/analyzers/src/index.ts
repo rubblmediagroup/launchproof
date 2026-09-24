@@ -667,17 +667,19 @@ export class TypeScriptNextAnalyzer implements Analyzer {
         registerNode(graphNode('ServerAction', file, [item.id], file));
       }
 
-      const publicRouteDeclared = sourceFile.statements.some(
-        (statement) =>
-          ts.isVariableStatement(statement) &&
-          statement.modifiers?.some((modifier) => modifier.kind === ts.SyntaxKind.ExportKeyword) &&
-          statement.declarationList.declarations.some(
-            (declaration) =>
-              ts.isIdentifier(declaration.name) &&
-              declaration.name.text === 'launchProofPublic' &&
-              declaration.initializer?.kind === ts.SyntaxKind.TrueKeyword,
-          ),
-      );
+      const publicRouteDeclared =
+        sourceFile.getFullText().includes('launchproof:public') ||
+        sourceFile.statements.some(
+          (statement) =>
+            ts.isVariableStatement(statement) &&
+            statement.modifiers?.some((modifier) => modifier.kind === ts.SyntaxKind.ExportKeyword) &&
+            statement.declarationList.declarations.some(
+              (declaration) =>
+                ts.isIdentifier(declaration.name) &&
+                declaration.name.text === 'launchProofPublic' &&
+                declaration.initializer?.kind === ts.SyntaxKind.TrueKeyword,
+            ),
+        );
       if (routeNode && publicRouteDeclared)
         evidence.push(
           ev(
