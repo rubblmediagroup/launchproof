@@ -1,5 +1,5 @@
 'use client';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import type {
   AnalysisProgressEvent,
   AnalysisReport,
@@ -33,6 +33,9 @@ const stageForPhase: Record<AnalysisProgressEvent['phase'], number> = {
 
 export function LaunchProofApp() {
   const [scenario, setScenario] = useState('production-reference');
+  const [analysisSource, setAnalysisSource] = useState<'showcase' | 'local'>('showcase');
+  const [localPath, setLocalPath] = useState('.');
+  const [localModeAvailable, setLocalModeAvailable] = useState(false);
   const [report, setReport] = useState<AnalysisReport | null>(null);
   const [view, setView] = useState<View>('overview');
   const [busy, setBusy] = useState(false);
@@ -45,6 +48,13 @@ export function LaunchProofApp() {
   const [progress, setProgress] = useState<AnalysisProgressEvent | null>(null);
   const [history, setHistory] = useState<AnalysisReport[]>([]);
 
+  useEffect(() => {
+    fetch('/api/capabilities')
+      .then((response) => response.json())
+      .then((body) => setLocalModeAvailable(Boolean(body?.localAnalysis?.enabled)))
+      .catch(() => setLocalModeAvailable(false));
+  }, []);
+
   async function analyze() {
     setBusy(true);
     setError('');
@@ -52,10 +62,11 @@ export function LaunchProofApp() {
     setComparison(null);
     setProgress(null);
     try {
-      const response = await fetch('/api/analyze-stream', {
+      const local = analysisSource === 'local';
+      const response = await fetch(local ? '/api/local-analyze-stream' : '/api/analyze-stream', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ scenario }),
+        body: JSON.stringify(local ? { repositoryPath: localPath } : { scenario }),
       });
       if (!response.ok || !response.body) {
         const body = await response.json().catch(() => ({}));
@@ -150,21 +161,58 @@ export function LaunchProofApp() {
           </p>
         </div>
         <div className="analyze-card">
-          <label>
-            AUTHORIZED SHOWCASE TARGET
-            <select
-              value={scenario}
-              onChange={(event) => setScenario(event.target.value)}
+          <div className="source-switch" aria-label="Analysis source">
+            <button
+              type="button"
+              className={analysisSource === 'showcase' ? 'selected' : ''}
+              onClick={() => setAnalysisSource('showcase')}
               disabled={busy}
             >
-              <option value="production-reference">Pipeline — Production Reference</option>
-              <option value="missing-tenant-authorization">
-                Pipeline — Missing Tenant Authorization
-              </option>
-              <option value="launchproof-self">LaunchProof — Self Analysis</option>
-              <option value="senten-reference">Senten — Integration Contract</option>
-            </select>
-          </label>
+              Showcase
+            </button>
+            <button
+              type="button"
+              className={analysisSource === 'local' ? 'selected' : ''}
+              onClick={() => setAnalysisSource('local')}
+              disabled={busy || !localModeAvailable}
+              title={
+                localModeAvailable
+                  ? 'Analyze a repository below the configured local repository root.'
+                  : 'Enable LAUNCHPROOF_LOCAL_MODE and LAUNCHPROOF_REPOSITORY_ROOT on a self-hosted instance.'
+              }
+            >
+              Local repository
+            </button>
+          </div>
+          {analysisSource === 'showcase' ? (
+            <label>
+              AUTHORIZED SHOWCASE TARGET
+              <select
+                value={scenario}
+                onChange={(event) => setScenario(event.target.value)}
+                disabled={busy}
+              >
+                <option value="production-reference">Pipeline — Production Reference</option>
+                <option value="missing-tenant-authorization">
+                  Pipeline — Missing Tenant Authorization
+                </option>
+                <option value="launchproof-self">LaunchProof — Self Analysis</option>
+                <option value="senten-reference">Senten — Integration Contract</option>
+              </select>
+            </label>
+          ) : (
+            <label>
+              REPOSITORY PATH UNDER CONFIGURED ROOT
+              <input
+                value={localPath}
+                onChange={(event) => setLocalPath(event.target.value)}
+                disabled={busy}
+                placeholder="project-name or ."
+                autoComplete="off"
+                spellCheck={false}
+              />
+            </label>
+          )}
           <button onClick={analyze} disabled={busy}>
             {busy ? 'Establishing evidence…' : 'Start deterministic analysis'}
           </button>
@@ -172,8 +220,9 @@ export function LaunchProofApp() {
             Compare reference ↔ regression
           </button>
           <small>
-            Static inspection only in Showcase Mode. No repository scripts, tests, builds, binaries
-            or Dockerfiles are executed.
+            Static inspection never executes repository scripts, tests, builds, binaries or
+            Dockerfiles. Local web analysis is available only when the self-hosted server explicitly
+            enables it and confines paths below a configured repository root.
           </small>
         </div>
       </section>
