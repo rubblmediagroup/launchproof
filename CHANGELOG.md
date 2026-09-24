@@ -1,37 +1,58 @@
 # Changelog
 
-All notable changes to LaunchProof are documented here. The project follows semantic versioning once tagged releases begin.
+All notable changes to LaunchProof are documented here. Stable public releases follow semantic versioning.
 
-## 0.2.0 - Unreleased release candidate
+## 1.0.0 - Release candidate
 
-### Implemented
+### Product
 
-- Typed immutable evidence provenance, Findings, Application Security Graph, Build Standard controls, Assurance Cases, policy and deterministic Release Confidence contracts.
-- Bounded non-executing repository snapshot ingestion with traversal, symlink, size and hostile-input protections.
+- Promoted LaunchProof from the v0.2 architecture milestone to the first public v1 product release program.
+- Web assurance workspace with release decision, domain scores, release gates, controls, Assurance Cases, findings, evidence, System Map, regression comparison, history, intelligence policy and limitations.
+- Added explicit product-mode onboarding for Web, Desktop and CLI/CI.
+- Added a “Why this decision” surface that exposes failed, partial and unknown controls plus VERIFIED evidence instead of hiding uncertainty.
+- Added deterministic Intended ↔ Observed architecture reconciliation states: MATCHED, UNOBSERVED, UNDECLARED, VIOLATION and UNKNOWN.
+
+### Senten
+
+- Senten remains an independent product and is the first official LaunchProof platform adapter.
+- Commit-bound `launchproof-evidence/v1` interchange remains fail-closed on mismatched provenance.
+- Imported upstream VERIFIED certainty is downgraded until LaunchProof independently verifies the guarantee.
+- Senten intended architecture and invariants are normalized into the Application Security Graph.
+- Dedicated UI exposes Senten evidence and architecture reconciliation.
+
+### Desktop
+
+- Tauri 2 desktop shell exposes fixed LaunchProof, Senten, Git and Docker operations through a narrow native bridge.
+- Added `launchproof.analyze` and `launchproof.version` operations.
+- Added Windows support for fixed npm-installed `.cmd` shims without exposing webview-controlled executable names or arguments.
+- Repository paths are canonicalized and command output remains bounded and time-limited.
+
+### Core assurance
+
+- Typed immutable evidence provenance, Findings, Application Security Graph, LP-01 through LP-20 controls, Assurance Cases, strict policy and deterministic Release Confidence.
+- Bounded non-executing repository snapshots with traversal, symlink, size and hostile-input protections.
 - TypeScript/JavaScript AST-aware Next.js analysis plus deterministic SQL, Supabase, environment, workflow, configuration and test discovery.
-- Normalization adapters for Semgrep, Gitleaks, OSV and Trivy outputs without silently executing scanners on the LaunchProof host.
-- Explicit isolated-verification runner boundary with authorization, allowlisted images, read-only mounts, capability dropping, resource/time/output limits and network-off defaults.
-- Machine-readable LP-01 through LP-20 evaluation and expanded security, tenancy, dependency, testing, production, AI and provenance Assurance Cases.
-- Strict `.launchproof.yml` validation, fail-closed inheritance and deterministic weighted scoring/hard release gates.
-- Provider-independent AI intelligence adapters for OpenAI, Anthropic, Gemini, Ollama and OpenAI-compatible endpoints with Evidence Only, Relevant Context, Extended Context and Local Only enforcement.
-- CLI analysis, authorized verification, scanner-result ingestion, JSON/SARIF output and CI-oriented exit codes.
-- Evidence-driven Showcase Mode with authorized snapshots, source-backed regression comparison, genuine analysis progress streaming and sanitized snapshot-specific public reports.
-- Interactive System Map, Assurance Case Explorer, Findings, Evidence, Controls, session history, intelligence-policy and limitation surfaces.
-- Docker/Compose self-hosting architecture and experimental Tauri desktop shell with a narrow native capability boundary.
-- Extension contracts and documented example analyzer/intelligence provider.
-- Threat model, security model, limitations, distribution, graph, assurance, analyzer, AI-governance and sandboxing documentation.
-- LaunchProof self-analysis policy and dependency-light offline verification path.
-- Node.js 24 LTS release baseline with required Node.js 26 forward-compatibility CI, Node 24 Docker/runtime targets, and a cross-platform RC harness callable directly from Command Prompt.
+- Normalization adapters for Semgrep, Gitleaks, OSV and Trivy outputs.
+- Explicit isolated-verification runner boundary with authorization, host-owned image allowlist, digest-pinned images, read-only mounts, dropped capabilities, resource/time/output bounds and network-off defaults.
+- Provider-independent optional AI adapters with source-transmission policy enforcement. AI cannot pass controls or release gates.
+
+### Distribution and release engineering
+
+- Node.js 24 LTS baseline with Node.js 26 forward-compatibility verification.
+- Cross-platform v1 release harness with controlled reference, regression, Senten and self-analysis scenarios.
+- GitHub Actions release workflow builds CLI artifacts, CycloneDX SBOM, SHA-256 checksums, Windows Tauri bundles and GHCR images.
+- Stable tag `v1.0.0` remains behind the final human release gate.
 
 ### Release-gate status
 
-- A genuine `package-lock.json` still must be generated by npm in a network-capable environment; LaunchProof intentionally does not fabricate one.
-- Full dependency-backed format, lint, typecheck, Vitest, Playwright, Next.js production build and Docker build remain release gates until they run successfully.
-- Tauri desktop packaging remains experimental and requires a Rust/Tauri-capable build environment.
+The code is currently `1.0.0-rc.1`, not yet the stable release. Before `v1.0.0`, all mandatory CI and machine checkpoints in `docs/release-verification.md` and `docs/v1-release-checklist.md` must be green.
+
+## 0.2.0 - Architecture milestone
+
+- Established the modular monorepo, evidence model, application graph, assurance controls, policy engine, scoring model, scanner adapters, optional AI integration, CLI, Docker/web surface and initial Tauri shell.
+- Established “Evidence before AI”, “Unknown ≠ Passed” and commit-bound release-evidence principles.
 
 ## 0.1.0 - Foundation
-
-### Implemented
 
 - Initial safe repository snapshot reader and TypeScript/Next.js/Supabase-aware analyzer.
 - Initial Evidence, Finding, graph, LP-01..LP-20 catalog, policy, Assurance Case and deterministic scoring foundation.

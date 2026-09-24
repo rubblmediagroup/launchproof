@@ -1,5 +1,6 @@
 import { spawn } from 'node:child_process';
 import path from 'node:path';
+import { LAUNCHPROOF_VERSION } from '@launchproof/contracts';
 import type {
   AnalyzerContext,
   AnalyzerOutput,
@@ -14,7 +15,7 @@ import type {
 } from '@launchproof/contracts';
 import { createEvidence, stableId } from '@launchproof/evidence';
 
-const VERSION = '0.2.0';
+const VERSION = LAUNCHPROOF_VERSION;
 
 function safeJson(content: string): unknown {
   try {

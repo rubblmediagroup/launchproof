@@ -1,3 +1,4 @@
+import { LAUNCHPROOF_VERSION } from '@launchproof/contracts';
 import type {
   AnalysisProvenance,
   AnalysisReport,
@@ -27,7 +28,7 @@ function redactVerificationOutput(input: string): string {
       /-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----[\s\S]*?-----END (?:RSA |EC |OPENSSH )?PRIVATE KEY-----/g,
       '[REDACTED_PRIVATE_KEY]',
     )
-    .replace(/\b(Bearer\s+)[A-Za-z0-9._~+\/-]{16,}\b/gi, '$1[REDACTED_TOKEN]')
+    .replace(/\b(Bearer\s+)[A-Za-z0-9._~+/-]{16,}\b/gi, '$1[REDACTED_TOKEN]')
     .replace(
       /\b(OPENAI_API_KEY|ANTHROPIC_API_KEY|GEMINI_API_KEY|GOOGLE_API_KEY|SUPABASE_SERVICE_ROLE_KEY|GITHUB_TOKEN|AWS_SECRET_ACCESS_KEY)\s*=\s*([^\s]+)/gi,
       '$1=[REDACTED]',
@@ -69,7 +70,7 @@ export async function analyzeSnapshot(
   snapshot: RepositorySnapshot,
   policy: LaunchProofPolicyShape,
   analyzers: Analyzer[],
-  version = '0.2.0',
+  version = LAUNCHPROOF_VERSION,
   options: {
     runner?: IsolatedRunner;
     authorizeDynamicVerification?: boolean;

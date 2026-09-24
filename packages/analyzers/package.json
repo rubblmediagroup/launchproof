@@ -1,12 +1,12 @@
 {
   "name": "@launchproof/analyzers",
-  "version": "0.2.0",
+  "version": "1.0.0-rc.1",
   "type": "module",
   "exports": "./src/index.ts",
   "dependencies": {
-    "@launchproof/evidence": "0.2.0",
+    "@launchproof/evidence": "1.0.0-rc.1",
     "typescript": "^5.9.2",
-    "@launchproof/contracts": "0.2.0"
+    "@launchproof/contracts": "1.0.0-rc.1"
   },
   "private": true
 }

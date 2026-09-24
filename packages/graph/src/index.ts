@@ -43,3 +43,5 @@ export function findPaths(
   walk(from, [from]);
   return out;
 }
+
+export * from './architecture-diff.js';

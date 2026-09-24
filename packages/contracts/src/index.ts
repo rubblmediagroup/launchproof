@@ -1,3 +1,5 @@
+export const LAUNCHPROOF_VERSION = '1.0.0-rc.1' as const;
+
 export const CERTAINTIES = ['DETECTED', 'INFERRED', 'VERIFIED'] as const;
 export type Certainty = (typeof CERTAINTIES)[number];
 export const SEVERITIES = ['info', 'low', 'medium', 'high', 'critical'] as const;

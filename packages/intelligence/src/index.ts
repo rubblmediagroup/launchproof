@@ -119,7 +119,8 @@ export function enforceAIDataPolicy(
   if (mode === 'local-only' && !provider.local)
     throw new Error('AI data policy is local-only; external provider call denied.');
   if (mode === 'evidence-only') {
-    const { sourceExcerpts: _sourceExcerpts, ...safe } = input;
+    const safe = { ...input };
+    delete safe.sourceExcerpts;
     return safe;
   }
   if (mode === 'relevant-context')

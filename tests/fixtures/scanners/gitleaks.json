@@ -1,0 +1,10 @@
+[
+  {
+    "Description": "Synthetic API token fixture",
+    "StartLine": 2,
+    "File": ".env.example",
+    "RuleID": "generic-api-key",
+    "Secret": "LP_FAKE_SECRET_MUST_NOT_SURVIVE",
+    "Fingerprint": "fixture:generic-api-key"
+  }
+]

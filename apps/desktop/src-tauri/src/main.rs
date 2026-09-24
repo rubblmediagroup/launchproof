@@ -27,6 +27,8 @@ fn validate_repository_path(path: String) -> Result<String, String> {
 
 fn operation_spec(operation: &str) -> Option<(&'static str, &'static [&'static str])> {
     match operation {
+        "launchproof.analyze" => Some(("launchproof", &["analyze", "."])),
+        "launchproof.version" => Some(("launchproof", &["--version"])),
         "senten.inspect" => Some(("senten", &["inspect"])),
         "senten.graph" => Some(("senten", &["graph"])),
         "senten.evidence" => Some(("senten", &["evidence"])),
@@ -61,9 +63,25 @@ fn run_native_operation(operation: String, repository_path: String) -> Result<se
     let (stdout_path, stdout_file) = temporary_output_file("stdout")?;
     let (stderr_path, stderr_file) = temporary_output_file("stderr")?;
 
-    // Never invoke a shell and never accept program names or arguments from the webview.
-    let mut child = Command::new(program)
-        .args(args)
+    // Program names and arguments come only from operation_spec; the webview cannot provide either.
+    // On Windows, npm-installed CLIs are .cmd shims. We use cmd.exe only for those fixed allowlisted
+    // shims and still keep repository_path out of the command string.
+    let mut command = if cfg!(target_os = "windows") && matches!(program, "launchproof" | "senten") {
+        let comspec = std::env::var("ComSpec").unwrap_or_else(|_| "cmd.exe".to_string());
+        let mut command = Command::new(comspec);
+        let fixed = std::iter::once(format!("{program}.cmd"))
+            .chain(args.iter().map(|value| value.to_string()))
+            .collect::<Vec<_>>()
+            .join(" ");
+        command.args(["/d", "/s", "/c"]).arg(fixed);
+        command
+    } else {
+        let mut command = Command::new(program);
+        command.args(args);
+        command
+    };
+
+    let mut child = command
         .current_dir(&repository)
         .stdin(Stdio::null())
         .stdout(Stdio::from(stdout_file))
@@ -107,6 +125,7 @@ fn desktop_capabilities() -> serde_json::Value {
         "credentials": "not-exposed-to-webview",
         "analysis": "delegated-to-launchproof-core-service",
         "nativeOperations": [
+            "launchproof.analyze", "launchproof.version",
             "senten.inspect", "senten.graph", "senten.evidence", "senten.evidence-test", "senten.report", "senten.assurance", "senten.version",
             "git.status", "docker.version"
         ]

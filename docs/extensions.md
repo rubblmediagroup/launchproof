@@ -25,4 +25,4 @@ Examples also live under:
 - `packages/integrations/examples/custom-analyzer.ts`
 - `packages/intelligence/examples/provider.ts`
 
-A marketplace, remote extension downloading and arbitrary runtime plugin loading are intentionally out of scope for v0.2.
+A marketplace, remote extension downloading and arbitrary runtime plugin loading are intentionally out of scope for the v1 trust boundary.

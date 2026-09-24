@@ -6,6 +6,7 @@ import type {
   GraphNode,
   ReportComparison,
 } from '@launchproof/core';
+import { compareIntendedAndObservedArchitecture } from '@launchproof/graph';
 
 const stages = ['Discover', 'Inspect', 'Map', 'Controls', 'Assurance', 'Decision'];
 type View =
@@ -137,6 +138,7 @@ export function LaunchProofApp() {
           Evidence before AI <span>•</span> Unknown ≠ Passed
         </div>
       </header>
+      <SurfaceGuide />
       <section className="hero">
         <div>
           <p className="eyebrow">SOFTWARE ASSURANCE / APPLICATION SECURITY</p>
@@ -221,6 +223,37 @@ export function LaunchProofApp() {
       {comparison && <ComparisonBanner data={comparison.comparison} />}
       {report && <Report report={report} view={view} setView={setView} history={history} />}
     </main>
+  );
+}
+
+function SurfaceGuide() {
+  return (
+    <section className="surface-guide" aria-label="LaunchProof product modes">
+      <article>
+        <span className="surface-kicker">WEB</span>
+        <strong>Explore assurance</strong>
+        <p>
+          Use authorized showcase snapshots and self-hosted reports without granting browser
+          filesystem access.
+        </p>
+      </article>
+      <article>
+        <span className="surface-kicker">DESKTOP</span>
+        <strong>Analyze local repositories</strong>
+        <p>
+          Select a local project and use the narrow native bridge for LaunchProof, Senten, Git and
+          Docker operations.
+        </p>
+      </article>
+      <article>
+        <span className="surface-kicker">CLI / CI</span>
+        <strong>Gate every release</strong>
+        <p>
+          Generate JSON or SARIF evidence, enforce policy and make release decisions reproducible in
+          automation.
+        </p>
+      </article>
+    </section>
   );
 }
 
@@ -345,6 +378,7 @@ function Overview({ report }: { report: AnalysisReport }) {
           ))}
         </div>
       </section>
+      <DecisionExplanation report={report} />
       {(report.release.blockers.length > 0 || report.release.conditions.length > 0) && (
         <section className="gates">
           <h3>Release gates</h3>
@@ -389,6 +423,47 @@ function Overview({ report }: { report: AnalysisReport }) {
         <SystemMap report={report} compact />
       </section>
     </>
+  );
+}
+
+function DecisionExplanation({ report }: { report: AnalysisReport }) {
+  const failed = report.controls.filter((item) => item.outcome === 'FAIL');
+  const partial = report.controls.filter((item) => item.outcome === 'PARTIAL');
+  const unknown = report.controls.filter((item) => item.outcome === 'UNKNOWN');
+  const verified = report.evidence.filter((item) => item.certainty === 'VERIFIED');
+
+  return (
+    <section className="decision-explain">
+      <div>
+        <p className="eyebrow">WHY THIS DECISION</p>
+        <h3>
+          {report.release.explanation[0] ??
+            'Release decision is derived from deterministic evidence and policy.'}
+        </h3>
+        <p>
+          LaunchProof does not convert missing evidence into a pass. Follow the failed, partial and
+          unknown controls into their evidence and findings before clearing a release gate.
+        </p>
+      </div>
+      <div className="decision-facts">
+        <article>
+          <b>{failed.length}</b>
+          <span>failed controls</span>
+        </article>
+        <article>
+          <b>{partial.length}</b>
+          <span>partial controls</span>
+        </article>
+        <article>
+          <b>{unknown.length}</b>
+          <span>unknown controls</span>
+        </article>
+        <article>
+          <b>{verified.length}</b>
+          <span>verified evidence</span>
+        </article>
+      </div>
+    </section>
   );
 }
 
@@ -578,6 +653,11 @@ function SentenView({ report }: { report: AnalysisReport }) {
   const sentenEdges = report.graph.edges.filter(
     (edge) => edge.metadata?.importedFrom === 'senten' || edge.metadata?.intended === true,
   );
+  const architectureDiff = useMemo(
+    () => compareIntendedAndObservedArchitecture(report.graph),
+    [report.graph],
+  );
+
   if (!sentenEvidence.length)
     return (
       <section>
@@ -597,6 +677,7 @@ function SentenView({ report }: { report: AnalysisReport }) {
         </div>
       </section>
     );
+
   return (
     <section>
       <div className="section-head">
@@ -604,9 +685,9 @@ function SentenView({ report }: { report: AnalysisReport }) {
           <p className="eyebrow">SENTEN INTEGRATION</p>
           <h2>Intended architecture meets observed assurance</h2>
           <p>
-            Senten artifacts are imported as evidence and intended-architecture graph data. They can
-            support LaunchProof reasoning, but cannot independently create a LaunchProof VERIFIED
-            result.
+            Senten declares intended architecture and invariants. LaunchProof independently observes
+            implementation evidence, then compares the two without allowing upstream claims to
+            manufacture a VERIFIED result.
           </p>
         </div>
       </div>
@@ -627,7 +708,44 @@ function SentenView({ report }: { report: AnalysisReport }) {
           <span>Runtime VERIFIED</span>
           <b>{sentenEvidence.filter((item) => item.certainty === 'VERIFIED').length}</b>
         </article>
+        <article>
+          <span>Architecture violations</span>
+          <b>{architectureDiff.counts.VIOLATION}</b>
+        </article>
       </div>
+
+      <div className="architecture-diff">
+        <div className="section-head compact-head">
+          <div>
+            <p className="eyebrow">INTENDED ↔ OBSERVED</p>
+            <h3>Architecture reconciliation</h3>
+          </div>
+        </div>
+        <div className="diff-summary">
+          {(['MATCHED', 'UNOBSERVED', 'UNDECLARED', 'VIOLATION', 'UNKNOWN'] as const).map(
+            (state) => (
+              <article className={`diff-state ${state.toLowerCase()}`} key={state}>
+                <b>{architectureDiff.counts[state]}</b>
+                <span>{state.replaceAll('_', ' ')}</span>
+              </article>
+            ),
+          )}
+        </div>
+        <div className="diff-list">
+          {architectureDiff.entries.slice(0, 40).map((entry) => (
+            <article key={`${entry.state}:${entry.label}:${entry.intendedNodeId ?? entry.observedNodeId ?? 'unknown'}`}>
+              <span className={`pill ${entry.state.toLowerCase()}`}>{entry.state}</span>
+              <div>
+                <b>{entry.label}</b>
+                <small>
+                  {entry.type} · {entry.evidenceIds.length} evidence item(s)
+                </small>
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+
       <div className="evidence-list">
         {sentenEvidence.map((item) => (
           <article key={item.id}>

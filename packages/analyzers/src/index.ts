@@ -1,6 +1,7 @@
 import { lstat, readFile, readdir, realpath } from 'node:fs/promises';
 import path from 'node:path';
 import ts from 'typescript';
+import { LAUNCHPROOF_VERSION } from '@launchproof/contracts';
 import type {
   Analyzer,
   AnalyzerContext,
@@ -14,7 +15,7 @@ import type {
 } from '@launchproof/contracts';
 import { createEvidence, stableId } from '@launchproof/evidence';
 
-const VERSION = '0.2.0';
+const VERSION = LAUNCHPROOF_VERSION;
 const EXCLUDED = new Set([
   '.git',
   'node_modules',

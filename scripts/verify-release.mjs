@@ -61,7 +61,7 @@ function runGate(name, command, commandArgs = []) {
 const major = Number(process.versions.node.split('.')[0]);
 if (![24, 26].includes(major)) {
   console.error(
-    `LaunchProof v0.2 RC verification supports Node 24.x (LTS baseline) or Node 26.x (forward-compatibility lane); found v${process.versions.node}.`,
+    `LaunchProof v1 RC verification supports Node 24.x (LTS baseline) or Node 26.x (forward-compatibility lane); found v${process.versions.node}.`,
   );
   process.exit(3);
 }
@@ -99,16 +99,19 @@ if (bootstrap) {
   runGate('npm-ci', 'npm', ['ci', '--ignore-scripts']);
 }
 
+runGate('release-version-consistency', 'npm', ['run', 'check:version']);
 runGate('format-check', 'npm', ['run', 'format:check']);
 runGate('lint', 'npm', ['run', 'lint']);
 runGate('typecheck', 'npm', ['run', 'typecheck']);
 runGate('unit-integration-tests', 'npm', ['test']);
+runGate('scanner-fixture-contract', 'npm', ['run', 'verify:scanner-fixtures']);
 runGate('web-production-build', 'npm', ['run', 'build', '-w', '@launchproof/web']);
 runGate('cli-production-build', 'npm', ['run', 'build', '-w', '@launchproof/cli']);
 runGate('cli-package-dry-run', 'npm', ['pack', '-w', '@launchproof/cli', '--dry-run']);
 
 const referenceReport = join(logRoot, 'production-reference.json');
 const regressionReport = join(logRoot, 'missing-tenant-authorization.json');
+const sentenReport = join(logRoot, 'senten-reference.json');
 const selfReport = join(logRoot, 'self-report.json');
 runGate('cli-production-reference', 'npm', [
   'run',
@@ -128,6 +131,15 @@ runGate('cli-tenant-regression', 'npm', [
   '--json',
   regressionReport,
 ]);
+runGate('cli-senten-reference', 'npm', [
+  'run',
+  'cli',
+  '--',
+  'analyze',
+  'scenarios/senten-reference',
+  '--json',
+  sentenReport,
+]);
 runGate('cli-self-analysis', 'npm', ['run', 'cli', '--', 'analyze', '.', '--json', selfReport]);
 
 if (withE2E) {
@@ -137,11 +149,13 @@ if (withE2E) {
 if (withDocker) {
   runGate('docker-version', 'docker', ['--version']);
   runGate('docker-compose-version', 'docker', ['compose', 'version']);
-  runGate('docker-build', 'docker', ['build', '-t', 'launchproof:0.2.0-rc', '.']);
+  runGate('docker-build', 'docker', ['build', '-t', 'launchproof:1.0.0-rc.1', '.']);
   runGate('docker-compose-config', 'docker', ['compose', 'config', '--quiet']);
 }
 
 console.log('');
-status('BASELINE CHECKPOINT PASSED');
+status('V1 BASELINE CHECKPOINT PASSED');
 status(`Evidence directory: ${logRoot}`);
-status('Next checkpoint: real scanner ingestion and isolated-runner verification.');
+status(
+  'Next checkpoints: real scanner ingestion, isolated-runner verification, Windows desktop build/install, and final v1 human gate.',
+);

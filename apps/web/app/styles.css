@@ -998,3 +998,139 @@ footer code {
     grid-template-columns: 1fr;
   }
 }
+
+.surface-guide {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  padding: 0 5vw;
+  background: var(--line);
+  border-bottom: 1px solid var(--line);
+}
+.surface-guide article {
+  background: #090d13;
+  padding: 18px 20px;
+  min-height: 120px;
+}
+.surface-guide strong,
+.surface-guide p,
+.surface-kicker {
+  display: block;
+}
+.surface-guide strong {
+  margin: 8px 0 6px;
+  color: #dbe7f6;
+}
+.surface-guide p {
+  margin: 0;
+  max-width: 420px;
+  color: #71849b;
+  font-size: 12px;
+  line-height: 1.55;
+}
+.surface-kicker {
+  font:
+    700 9px/1 ui-monospace,
+    monospace;
+  letter-spacing: 0.12em;
+  color: #5fa6ff;
+}
+.decision-explain {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+  padding: 28px 0;
+  border-bottom: 1px solid var(--line);
+}
+.decision-explain h3 {
+  margin: 8px 0;
+  font-size: 22px;
+}
+.decision-explain > div > p:not(.eyebrow) {
+  color: #74849a;
+  line-height: 1.6;
+}
+.decision-facts,
+.diff-summary {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+.decision-facts article,
+.diff-state {
+  border: 1px solid var(--line);
+  background: #0a0f16;
+  padding: 16px;
+}
+.decision-facts b,
+.diff-state b {
+  display: block;
+  font-size: 26px;
+}
+.decision-facts span,
+.diff-state span {
+  color: #697d96;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.architecture-diff {
+  margin: 22px 0 34px;
+  border: 1px solid var(--line);
+  background: #090d13;
+  padding: 20px;
+}
+.compact-head {
+  padding-top: 0;
+}
+.diff-summary {
+  grid-template-columns: repeat(5, 1fr);
+  margin-bottom: 16px;
+}
+.diff-state.matched b,
+.pill.matched {
+  color: var(--green);
+}
+.diff-state.unobserved b,
+.diff-state.undeclared b,
+.pill.unobserved,
+.pill.undeclared {
+  color: var(--amber);
+}
+.diff-state.violation b,
+.pill.violation {
+  color: var(--red);
+}
+.diff-state.unknown b,
+.pill.unknown {
+  color: #8798ad;
+}
+.diff-list {
+  border-top: 1px solid var(--line);
+}
+.diff-list article {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  gap: 14px;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #182231;
+}
+.diff-list b,
+.diff-list small {
+  display: block;
+}
+.diff-list small {
+  color: #667991;
+  margin-top: 4px;
+}
+@media (max-width: 900px) {
+  .surface-guide,
+  .decision-explain {
+    grid-template-columns: 1fr;
+  }
+  .diff-summary,
+  .decision-facts {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

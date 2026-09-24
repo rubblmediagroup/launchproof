@@ -1,6 +1,6 @@
 {
   "name": "launchproof",
-  "version": "0.2.0",
+  "version": "1.0.0-rc.1",
   "private": true,
   "license": "Apache-2.0",
   "workspaces": [
@@ -20,7 +20,11 @@
     "verify:rc:windows": "node scripts/verify-release.mjs",
     "build:cli": "npm run build -w @launchproof/cli",
     "pack:cli": "npm pack -w @launchproof/cli --dry-run",
-    "verify:rc": "node scripts/verify-release.mjs"
+    "verify:rc": "node scripts/verify-release.mjs",
+    "verify:v1": "node scripts/verify-release.mjs --e2e --docker",
+    "release:check": "node scripts/verify-release.mjs --e2e --docker",
+    "check:version": "node scripts/check-release-version.mjs",
+    "verify:scanner-fixtures": "node scripts/verify-scanner-fixtures.mjs"
   },
   "devDependencies": {
     "@eslint/js": "^9.35.0",

@@ -2,8 +2,14 @@
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { analyzeRepository, formatReport, toSarif } from './index.js';
+import { LAUNCHPROOF_VERSION } from '@launchproof/core';
 
+const CLI_VERSION = LAUNCHPROOF_VERSION;
 const args = process.argv.slice(2);
+if (args.includes('--version') || args.includes('-v')) {
+  console.log(CLI_VERSION);
+  process.exit(0);
+}
 const command = args.shift() ?? 'analyze';
 const target = !args[0]?.startsWith('--') ? (args.shift() ?? '.') : '.';
 function values(flag: string) {
