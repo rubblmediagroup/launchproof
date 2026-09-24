@@ -732,8 +732,8 @@ function SentenView({ report }: { report: AnalysisReport }) {
           )}
         </div>
         <div className="diff-list">
-          {architectureDiff.entries.slice(0, 40).map((entry, index) => (
-            <article key={`${entry.state}:${entry.label}:${index}`}>
+          {architectureDiff.entries.slice(0, 40).map((entry) => (
+            <article key={`${entry.state}:${entry.label}:${entry.intendedNodeId ?? entry.observedNodeId ?? 'unknown'}`}>
               <span className={`pill ${entry.state.toLowerCase()}`}>{entry.state}</span>
               <div>
                 <b>{entry.label}</b>
