@@ -15,7 +15,7 @@ import type {
 } from '@launchproof/contracts';
 import { createEvidence, stableId } from '@launchproof/evidence';
 
-const VERSION = '0.2.0';
+const VERSION = '1.0.0-rc.1';
 const MANIFEST_API = 'launchproof.dev/v1' as const;
 const EVIDENCE_SCHEMA = 'launchproof-evidence/v1' as const;
 const EXTENSION_ID = /^[a-z0-9][a-z0-9._-]{1,127}$/;
@@ -178,7 +178,7 @@ export class LaunchProofEvidenceImporter implements EvidenceImporter {
       vendor: 'LaunchProof',
     },
     capabilities: ['evidence', 'graph', 'invariants'],
-    compatibility: { core: '>=0.2 <1.0' },
+    compatibility: { core: '>=1.0.0-rc.1 <2.0.0' },
   });
 
   supports(source: { path?: string; mediaType?: string; schema?: string }): boolean {
@@ -346,7 +346,7 @@ export const sentenManifest: ExtensionManifest = validateExtensionManifest({
   kind: 'PlatformAdapter',
   metadata: { id: 'senten', version: VERSION, displayName: 'Senten', vendor: 'ThomasDSCX Labs' },
   capabilities: ['platform-detection', 'architecture', 'policy', 'invariants', 'evidence', 'graph'],
-  compatibility: { core: '>=0.2 <1.0' },
+  compatibility: { core: '>=1.0.0-rc.1 <2.0.0' },
 });
 
 function packageDeclaresSenten(snapshot: RepositorySnapshot): boolean {
