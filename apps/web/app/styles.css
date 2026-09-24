@@ -1088,3 +1088,11 @@ footer code {
     grid-template-columns: 1fr;
   }
 }
+
+.report-nav .export-report {
+  margin-left: auto;
+  border-left: 1px solid var(--line);
+  border-right: 0;
+  color: #9bc4f6;
+  white-space: nowrap;
+}
