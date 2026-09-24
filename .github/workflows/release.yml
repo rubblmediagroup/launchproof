@@ -32,12 +32,22 @@ jobs:
       - run: npm run build -w @launchproof/web
       - run: npm run build -w @launchproof/cli
       - run: npm pack -w @launchproof/cli --dry-run
+      - name: Runtime dependency audit
+        run: npm audit --omit=dev --audit-level=high
+      - name: Controlled release scenarios
+        run: |
+          npm run cli -- analyze scenarios/production-reference --json .launchproof/reference-report.json
+          npm run cli -- analyze scenarios/missing-tenant-authorization --json .launchproof/regression-report.json
+          npm run verify:scenarios -- .launchproof/reference-report.json .launchproof/regression-report.json
       - name: Self analysis
         run: npm run cli -- analyze . --json .launchproof/self-report.json
       - uses: actions/upload-artifact@v4
         with:
           name: self-analysis-node-${{ matrix.node }}
-          path: .launchproof/self-report.json
+          path: |
+            .launchproof/reference-report.json
+            .launchproof/regression-report.json
+            .launchproof/self-report.json
 
   browser:
     name: browser release surface
