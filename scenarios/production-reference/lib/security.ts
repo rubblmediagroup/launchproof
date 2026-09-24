@@ -1,6 +1,6 @@
 export const supabase = {
   from: (name: string) => ({
-    select: (_: string) => ({ eq: (_: string, __: string) => ({ name }) }),
+    select: () => ({ eq: () => ({ name }) }),
   }),
 };
 export async function requireUser() {
