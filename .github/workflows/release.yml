@@ -1,0 +1,142 @@
+name: release
+on:
+  push:
+    tags:
+      - 'v1.*'
+
+permissions:
+  contents: write
+  packages: write
+
+jobs:
+  verify:
+    name: verify stable release candidate
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    strategy:
+      fail-fast: false
+      matrix:
+        node: [24, 26]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --ignore-scripts
+      - run: npm run format:check
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build -w @launchproof/web
+      - run: npm run build -w @launchproof/cli
+      - run: npm pack -w @launchproof/cli --dry-run
+      - name: Self analysis
+        run: npm run cli -- analyze . --json .launchproof/self-report.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: self-analysis-node-${{ matrix.node }}
+          path: .launchproof/self-report.json
+
+  browser:
+    name: browser release surface
+    runs-on: ubuntu-latest
+    needs: verify
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --ignore-scripts
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:e2e
+
+  cli-artifact:
+    name: compiled CLI artifact
+    runs-on: ubuntu-latest
+    needs: verify
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --ignore-scripts
+      - run: npm run build -w @launchproof/cli
+      - run: npm pack -w @launchproof/cli
+      - name: Checksums
+        run: sha256sum launchproof-cli-*.tgz > launchproof-cli-SHA256SUMS.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: launchproof-cli
+          path: |
+            launchproof-cli-*.tgz
+            launchproof-cli-SHA256SUMS.txt
+
+  container:
+    name: GHCR image
+    runs-on: ubuntu-latest
+    needs: [verify, browser]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - uses: docker/metadata-action@v5
+        id: meta
+        with:
+          images: ghcr.io/rubblmediagroup/launchproof
+          tags: |
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=raw,value=latest
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+  windows-desktop:
+    name: Windows desktop bundle
+    runs-on: windows-latest
+    needs: verify
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - uses: dtolnay/rust-toolchain@stable
+      - run: npm ci --ignore-scripts
+      - run: npm run build -w @launchproof/desktop
+      - uses: actions/upload-artifact@v4
+        with:
+          name: launchproof-windows-desktop
+          path: apps/desktop/src-tauri/target/release/bundle/**/*
+          if-no-files-found: error
+
+  release:
+    name: GitHub Release
+    runs-on: ubuntu-latest
+    needs: [verify, browser, cli-artifact, container, windows-desktop]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+      - name: Create release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "${GITHUB_REF_NAME}" dist/**/* --generate-notes --verify-tag
