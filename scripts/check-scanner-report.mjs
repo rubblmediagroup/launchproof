@@ -24,4 +24,6 @@ if (openFindings.length < 4) {
   console.error(`Expected scanner findings; received ${openFindings.length}`);
   process.exit(1);
 }
-console.log(`Scanner contract report OK: ${openFindings.length} open findings, secret value redacted.`);
+console.log(
+  `Scanner contract report OK: ${openFindings.length} open findings, secret value redacted.`,
+);

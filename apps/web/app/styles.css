@@ -999,7 +999,6 @@ footer code {
   }
 }
 
-
 .surface-guide {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -1030,7 +1029,9 @@ footer code {
   line-height: 1.55;
 }
 .surface-kicker {
-  font: 700 9px/1 ui-monospace, monospace;
+  font:
+    700 9px/1 ui-monospace,
+    monospace;
   letter-spacing: 0.12em;
   color: #5fa6ff;
 }
@@ -1087,15 +1088,23 @@ footer code {
   margin-bottom: 16px;
 }
 .diff-state.matched b,
-.pill.matched { color: var(--green); }
+.pill.matched {
+  color: var(--green);
+}
 .diff-state.unobserved b,
 .diff-state.undeclared b,
 .pill.unobserved,
-.pill.undeclared { color: var(--amber); }
+.pill.undeclared {
+  color: var(--amber);
+}
 .diff-state.violation b,
-.pill.violation { color: var(--red); }
+.pill.violation {
+  color: var(--red);
+}
 .diff-state.unknown b,
-.pill.unknown { color: #8798ad; }
+.pill.unknown {
+  color: #8798ad;
+}
 .diff-list {
   border-top: 1px solid var(--line);
 }

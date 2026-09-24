@@ -18,7 +18,12 @@ async function packageFiles(dir) {
 for (const file of [...(await packageFiles('apps')), ...(await packageFiles('packages'))]) {
   const pkg = JSON.parse(await readFile(path.join(root, file), 'utf8'));
   if (pkg.version !== expected) problems.push(`${file}: version ${pkg.version} != ${expected}`);
-  for (const field of ['dependencies', 'devDependencies', 'peerDependencies', 'optionalDependencies']) {
+  for (const field of [
+    'dependencies',
+    'devDependencies',
+    'peerDependencies',
+    'optionalDependencies',
+  ]) {
     for (const [name, version] of Object.entries(pkg[field] ?? {})) {
       if (name.startsWith('@launchproof/') && version !== expected) {
         problems.push(`${file}: ${field} ${name}@${version} != ${expected}`);
@@ -27,18 +32,24 @@ for (const file of [...(await packageFiles('apps')), ...(await packageFiles('pac
   }
 }
 
-const tauri = JSON.parse(await readFile(path.join(root, 'apps/desktop/src-tauri/tauri.conf.json'), 'utf8'));
+const tauri = JSON.parse(
+  await readFile(path.join(root, 'apps/desktop/src-tauri/tauri.conf.json'), 'utf8'),
+);
 if (tauri.version !== expected)
   problems.push(`apps/desktop/src-tauri/tauri.conf.json: version ${tauri.version} != ${expected}`);
 
 const cargo = await readFile(path.join(root, 'apps/desktop/src-tauri/Cargo.toml'), 'utf8');
 const cargoVersion = cargo.match(/^version\s*=\s*"([^"]+)"/m)?.[1];
 if (cargoVersion !== expected)
-  problems.push(`apps/desktop/src-tauri/Cargo.toml: version ${cargoVersion ?? 'missing'} != ${expected}`);
+  problems.push(
+    `apps/desktop/src-tauri/Cargo.toml: version ${cargoVersion ?? 'missing'} != ${expected}`,
+  );
 
 const contracts = await readFile(path.join(root, 'packages/contracts/src/index.ts'), 'utf8');
 if (!contracts.includes(`LAUNCHPROOF_VERSION = '${expected}'`))
-  problems.push('packages/contracts/src/index.ts: LAUNCHPROOF_VERSION does not match package version');
+  problems.push(
+    'packages/contracts/src/index.ts: LAUNCHPROOF_VERSION does not match package version',
+  );
 
 if (problems.length) {
   console.error('LaunchProof release version consistency failed:');

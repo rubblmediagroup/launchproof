@@ -6,7 +6,11 @@ const operationsRoot = document.querySelector('#operations');
 let validatedPath = '';
 
 const operations = [
-  ['launchproof.analyze', 'Analyze', 'Run LaunchProof deterministic analysis for the selected repository.'],
+  [
+    'launchproof.analyze',
+    'Analyze',
+    'Run LaunchProof deterministic analysis for the selected repository.',
+  ],
   ['launchproof.version', 'LaunchProof Version', 'Confirm the installed LaunchProof CLI version.'],
   ['senten.inspect', 'Inspect', 'Inspect Senten architecture and repository state.'],
   ['senten.graph', 'Graph', 'Render Senten graph output for the selected repository.'],

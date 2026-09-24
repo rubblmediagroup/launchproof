@@ -8,19 +8,28 @@ rmSync(outDir, { recursive: true, force: true });
 mkdirSync(outDir, { recursive: true });
 const report = join(outDir, 'scanner-report.json');
 
-const npm = process.platform === 'win32'
-  ? { command: process.env.ComSpec || 'cmd.exe', args: ['/d', '/s', '/c', 'npm.cmd'] }
-  : { command: 'npm', args: [] };
+const npm =
+  process.platform === 'win32'
+    ? { command: process.env.ComSpec || 'cmd.exe', args: ['/d', '/s', '/c', 'npm.cmd'] }
+    : { command: 'npm', args: [] };
 
 const args = [
   ...npm.args,
-  'run', 'cli', '--',
-  'analyze', 'scenarios/production-reference',
-  '--scanner', 'semgrep-json:tests/fixtures/scanners/semgrep.json',
-  '--scanner', 'gitleaks-json:tests/fixtures/scanners/gitleaks.json',
-  '--scanner', 'osv-json:tests/fixtures/scanners/osv.json',
-  '--scanner', 'trivy-json:tests/fixtures/scanners/trivy.json',
-  '--json', report,
+  'run',
+  'cli',
+  '--',
+  'analyze',
+  'scenarios/production-reference',
+  '--scanner',
+  'semgrep-json:tests/fixtures/scanners/semgrep.json',
+  '--scanner',
+  'gitleaks-json:tests/fixtures/scanners/gitleaks.json',
+  '--scanner',
+  'osv-json:tests/fixtures/scanners/osv.json',
+  '--scanner',
+  'trivy-json:tests/fixtures/scanners/trivy.json',
+  '--json',
+  report,
 ];
 
 const result = spawnSync(npm.command, args, {

@@ -12,9 +12,7 @@
         "severity": "ERROR",
         "metadata": {
           "launchproof_control": "LP-07",
-          "cwe": [
-            "CWE-95"
-          ]
+          "cwe": ["CWE-95"]
         }
       }
     }

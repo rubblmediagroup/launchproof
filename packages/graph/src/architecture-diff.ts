@@ -1,11 +1,7 @@
 import type { ApplicationGraph, GraphNodeType } from '@launchproof/contracts';
 
 export type ArchitectureDiffState =
-  | 'MATCHED'
-  | 'UNOBSERVED'
-  | 'UNDECLARED'
-  | 'VIOLATION'
-  | 'UNKNOWN';
+  'MATCHED' | 'UNOBSERVED' | 'UNDECLARED' | 'VIOLATION' | 'UNKNOWN';
 
 export interface ArchitectureDiffEntry {
   state: ArchitectureDiffState;
@@ -23,7 +19,11 @@ export interface ArchitectureDiff {
 }
 
 function normalize(value: string): string {
-  return value.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+  return value
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '');
 }
 
 function key(type: GraphNodeType, label: string): string {

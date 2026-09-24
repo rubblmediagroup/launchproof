@@ -1,5 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { ApplicationGraphBuilder, compareIntendedAndObservedArchitecture } from '@launchproof/graph';
+import {
+  ApplicationGraphBuilder,
+  compareIntendedAndObservedArchitecture,
+} from '@launchproof/graph';
 describe('graph provenance', () => {
   it('refuses edges whose endpoints do not exist', () => {
     const b = new ApplicationGraphBuilder();
@@ -9,13 +12,24 @@ describe('graph provenance', () => {
   });
 });
 
-
 describe('intended versus observed architecture', () => {
   it('classifies matched, unobserved and undeclared nodes deterministically', () => {
     const graph = {
       nodes: [
-        { id: 'i1', type: 'Module' as const, label: 'Auth', evidenceIds: ['e1'], metadata: { intended: true } },
-        { id: 'i2', type: 'Module' as const, label: 'Billing', evidenceIds: ['e2'], metadata: { intended: true } },
+        {
+          id: 'i1',
+          type: 'Module' as const,
+          label: 'Auth',
+          evidenceIds: ['e1'],
+          metadata: { intended: true },
+        },
+        {
+          id: 'i2',
+          type: 'Module' as const,
+          label: 'Billing',
+          evidenceIds: ['e2'],
+          metadata: { intended: true },
+        },
         { id: 'o1', type: 'Module' as const, label: 'Auth', evidenceIds: ['e3'], metadata: {} },
         { id: 'o2', type: 'Service' as const, label: 'Email', evidenceIds: ['e4'], metadata: {} },
       ],

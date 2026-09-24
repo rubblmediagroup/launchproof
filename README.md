@@ -36,7 +36,7 @@ The product is built around three rules:
 | OpenAI/Anthropic/Gemini/Ollama/OpenAI-compatible intelligence adapters | Implemented, optional               |
 | AI data-governance enforcement                                         | Implemented                         |
 | Docker self-hosted web experience                                      | Implemented                         |
-| Tauri desktop shell                                                    | v1 release candidate               |
+| Tauri desktop shell                                                    | v1 release candidate                |
 | Broad language ecosystems                                              | Planned through extension contracts |
 | LaunchProof cloud requirement                                          | None                                |
 
@@ -270,7 +270,6 @@ LaunchProof is a flagship ThomasDSCX Labs project. Any public badge/report must 
 LaunchProof Core is platform-agnostic. v1 defines versioned language/framework/platform/evidence-importer contracts rather than teaching Core about every ecosystem. Senten is the first official platform adapter: LaunchProof can detect `senten.architecture.json`, render intended architecture/invariants, and import commit-bound `launchproof-evidence/v1` artifacts without trusting Senten to mark LaunchProof controls as passed. See [`docs/senten-integration.md`](docs/senten-integration.md).
 
 LaunchProof Desktop also exposes a narrow allowlisted native-operation bridge for Senten/Git/Docker diagnostics. It deliberately does **not** expose a free-form terminal or arbitrary shell execution to the webview.
-
 
 ## Release candidate gate
 

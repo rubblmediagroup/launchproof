@@ -156,4 +156,6 @@ if (withDocker) {
 console.log('');
 status('V1 BASELINE CHECKPOINT PASSED');
 status(`Evidence directory: ${logRoot}`);
-status('Next checkpoints: real scanner ingestion, isolated-runner verification, Windows desktop build/install, and final v1 human gate.');
+status(
+  'Next checkpoints: real scanner ingestion, isolated-runner verification, Windows desktop build/install, and final v1 human gate.',
+);
