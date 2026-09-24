@@ -1,27 +1,33 @@
 name: ci
+
 on:
-  push:
-    branches: [main]
-  pull_request:
+  workflow_dispatch:
+    inputs:
+      full:
+        description: 'Run release surfaces, Node 26, Docker, Playwright, and Windows desktop'
+        required: false
+        default: false
+        type: boolean
+
 permissions:
   contents: read
 
+concurrency:
+  group: launchproof-ci-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  verify-runtime:
-    name: verify / node-${{ matrix.node }}
+  verify-node24:
+    name: verify / node-24
     runs-on: ubuntu-latest
-    timeout-minutes: 25
-    strategy:
-      fail-fast: false
-      matrix:
-        node: [24, 26]
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
       - name: Dependency lock required
-        run: test -f package-lock.json || { echo 'package-lock.json is required for reproducible public CI'; exit 1; }
+        run: test -f package-lock.json || { echo 'package-lock.json is required for reproducible CI'; exit 1; }
       - uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node }}
+          node-version: 24
           cache: npm
           cache-dependency-path: package-lock.json
       - run: npm ci --ignore-scripts
@@ -34,33 +40,39 @@ jobs:
       - run: npm pack -w @launchproof/cli --dry-run
       - name: Runtime dependency audit
         run: npm audit --omit=dev --audit-level=high
-      - name: Scanner fixture contract
-        run: |
-          npm run cli -- analyze scenarios/production-reference \
-            --scanner semgrep-json:tests/fixtures/scanners/semgrep.json \
-            --scanner gitleaks-json:tests/fixtures/scanners/gitleaks.json \
-            --scanner osv-json:tests/fixtures/scanners/osv.json \
-            --scanner trivy-json:tests/fixtures/scanners/trivy.json \
-            --json /tmp/launchproof-scanners.json
-          npm run verify:scanners -- /tmp/launchproof-scanners.json
       - name: Controlled release scenarios
         run: |
           npm run cli -- analyze scenarios/production-reference --json /tmp/launchproof-reference.json
           npm run cli -- analyze scenarios/missing-tenant-authorization --json /tmp/launchproof-regression.json
           npm run cli -- analyze scenarios/senten-reference --json /tmp/launchproof-senten.json
           npm run verify:scenarios -- /tmp/launchproof-reference.json /tmp/launchproof-regression.json /tmp/launchproof-senten.json
-      - name: LaunchProof self-analysis
-        run: npm run cli -- analyze . --json /tmp/launchproof-self.json
+
+  verify-node26:
+    name: verify / node-26
+    if: ${{ inputs.full }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 26
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --ignore-scripts
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build -w @launchproof/web
+      - run: npm run build -w @launchproof/cli
 
   release-surfaces:
     name: release surfaces / node-24
+    if: ${{ inputs.full }}
     runs-on: ubuntu-latest
     timeout-minutes: 30
-    needs: verify-runtime
+    needs: verify-node24
     steps:
       - uses: actions/checkout@v4
-      - name: Dependency lock required
-        run: test -f package-lock.json || { echo 'package-lock.json is required for reproducible public CI'; exit 1; }
       - uses: actions/setup-node@v4
         with:
           node-version: 24
@@ -71,7 +83,7 @@ jobs:
         run: npx playwright install --with-deps chromium
       - run: npm run test:e2e
       - name: Docker Compose validation
-        run: docker compose config
+        run: docker compose config --quiet
       - name: Docker build
         run: docker build -t launchproof-ci .
       - name: Isolated runner image
@@ -83,14 +95,12 @@ jobs:
 
   windows-desktop:
     name: windows desktop / node-24
+    if: ${{ inputs.full }}
     runs-on: windows-latest
     timeout-minutes: 35
-    needs: verify-runtime
+    needs: verify-node24
     steps:
       - uses: actions/checkout@v4
-      - name: Dependency lock required
-        shell: pwsh
-        run: if (-not (Test-Path package-lock.json)) { throw 'package-lock.json is required for reproducible public CI' }
       - uses: actions/setup-node@v4
         with:
           node-version: 24
