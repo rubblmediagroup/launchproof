@@ -19,3 +19,17 @@ Docker Compose is the canonical self-hosted web distribution. The container is r
 The hosted-compatible UI analyzes only authorized targets and controlled scenarios.
 
 There is one normalized LaunchProof report model across surfaces, and no surface requires LaunchProof cloud or an LLM.
+
+
+## Self-hosted UI repository analysis
+
+The public Showcase surface never accepts arbitrary filesystem paths. A self-hosted operator can opt into bounded local repository analysis by setting both:
+
+```text
+LAUNCHPROOF_LOCAL_MODE=1
+LAUNCHPROOF_REPOSITORY_ROOT=/absolute/path/to/allowed/projects
+```
+
+The browser then accepts only **relative** paths under that configured root. Absolute paths and traversal outside the configured root are rejected. Local web analysis remains static-only; dynamic verification is not exposed through the public web API.
+
+For unrestricted developer-machine repository selection and native Senten/Git/Docker operations, use the Tauri desktop surface or the CLI.
