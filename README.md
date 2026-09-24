@@ -16,7 +16,7 @@ The product is built around three rules:
 
 ## Status
 
-**v0.2 implementation candidate.** The full PRD architecture is represented in the repository, with deepest implementation for TypeScript/JavaScript, Next.js, React, Node.js and Supabase-aware applications.
+**v1.0.0 release candidate.** LaunchProof is now in the first public-release program. The architecture and product surfaces are implemented; the stable `v1.0.0` tag remains gated on CI, real-machine scanner/runner validation, Windows desktop packaging and the final release checklist.
 
 | Capability                                                             | Status                              |
 | ---------------------------------------------------------------------- | ----------------------------------- |
@@ -36,11 +36,23 @@ The product is built around three rules:
 | OpenAI/Anthropic/Gemini/Ollama/OpenAI-compatible intelligence adapters | Implemented, optional               |
 | AI data-governance enforcement                                         | Implemented                         |
 | Docker self-hosted web experience                                      | Implemented                         |
-| Tauri desktop shell                                                    | Experimental                        |
+| Tauri desktop shell                                                    | v1 release candidate               |
 | Broad language ecosystems                                              | Planned through extension contracts |
 | LaunchProof cloud requirement                                          | None                                |
 
 A capability being implemented does **not** mean LaunchProof proves an application secure. See [`docs/limitations.md`](docs/limitations.md).
+
+## Product surfaces
+
+LaunchProof 1.0 is intentionally multi-surface:
+
+- **Web** — evidence workspace, Showcase Mode and self-hosted reports;
+- **Desktop** — Tauri local-repository workflow with a narrow native boundary;
+- **CLI / CI** — deterministic analysis, verification, JSON/SARIF and release gating;
+- **Docker** — canonical self-hosted web distribution;
+- **Senten adapter** — intended architecture, invariants and evidence interchange without coupling either product to the other.
+
+The web UI does not request arbitrary local filesystem access. Local repository analysis belongs to Desktop or CLI.
 
 ## Architecture
 
@@ -174,6 +186,7 @@ The hosted-compatible Showcase UI currently exposes only server-authorized targe
 - Pipeline — Production Reference
 - Pipeline — Missing Tenant Authorization
 - LaunchProof — Self Analysis
+- Senten — Integration Contract
 
 The controlled regression removes real authorization source from the fixture. The before/after view compares changed controls, Assurance Cases, findings and evidence rather than animating a fabricated score.
 
@@ -209,7 +222,8 @@ apps/
   web/             hosted/self-hosted evidence UI
   desktop/         experimental Tauri client shell
 packages/
-  core/            contracts + orchestration + report comparison
+  contracts/       stable evidence/graph/extension contracts
+  core/            orchestration + report comparison + public facade
   analyzers/       deterministic TS/JS/Next/Supabase inspection
   evidence/        evidence creation + stable IDs
   graph/           typed Application Security Graph
@@ -253,6 +267,20 @@ LaunchProof is a flagship ThomasDSCX Labs project. Any public badge/report must 
 
 ## Extensibility and Senten
 
-LaunchProof Core is platform-agnostic. v0.2 defines versioned language/framework/platform/evidence-importer contracts rather than teaching Core about every ecosystem. Senten is the first official platform adapter: LaunchProof can detect `senten.architecture.json`, render intended architecture/invariants, and import commit-bound `launchproof-evidence/v1` artifacts without trusting Senten to mark LaunchProof controls as passed. See [`docs/senten-integration.md`](docs/senten-integration.md).
+LaunchProof Core is platform-agnostic. v1 defines versioned language/framework/platform/evidence-importer contracts rather than teaching Core about every ecosystem. Senten is the first official platform adapter: LaunchProof can detect `senten.architecture.json`, render intended architecture/invariants, and import commit-bound `launchproof-evidence/v1` artifacts without trusting Senten to mark LaunchProof controls as passed. See [`docs/senten-integration.md`](docs/senten-integration.md).
 
 LaunchProof Desktop also exposes a narrow allowlisted native-operation bridge for Senten/Git/Docker diagnostics. It deliberately does **not** expose a free-form terminal or arbitrary shell execution to the webview.
+
+
+## Release candidate gate
+
+LaunchProof intentionally does not claim a stable 1.0 release merely because features are implemented. The exact release commit must pass the Node 24/26 matrix, browser/E2E, Docker, scanner-ingestion, isolated-runner, Senten, Windows desktop and distribution checkpoints.
+
+See:
+
+- [Release verification](docs/release-verification.md)
+- [v1 release checklist](docs/v1-release-checklist.md)
+- [Known limitations](docs/limitations.md)
+- [Security policy](SECURITY.md)
+
+The stable `v1.0.0` tag is a HUMAN_GATE.
