@@ -413,8 +413,12 @@ function DecisionExplainer({ report }: { report: AnalysisReport }) {
       </div>
       <div className="decision-list">
         {attention.slice(0, 8).map((item) => {
-          const evidence = report.evidence.filter((entry) => item.evidenceIds.includes(entry.id));
-          const findings = report.findings.filter((entry) => item.findingIds.includes(entry.id));
+          const evidence = report.evidence.filter((entry) =>
+            item.evidenceIds.includes(entry.id),
+          );
+          const findings = report.findings.filter((entry) =>
+            item.findingIds.includes(entry.id),
+          );
           return (
             <article key={item.control.id}>
               <header>
@@ -647,8 +651,12 @@ function SentenView({ report }: { report: AnalysisReport }) {
   const observedNodes = report.graph.nodes.filter(
     (node) => node.metadata.intended !== true && node.metadata.importedFrom !== 'senten',
   );
-  const observedLabels = new Set(observedNodes.map((node) => normalizeArchitectureLabel(node.label)));
-  const intendedLabels = new Set(intendedNodes.map((node) => normalizeArchitectureLabel(node.label)));
+  const observedLabels = new Set(
+    observedNodes.map((node) => normalizeArchitectureLabel(node.label)),
+  );
+  const intendedLabels = new Set(
+    intendedNodes.map((node) => normalizeArchitectureLabel(node.label)),
+  );
   const matchedNodes = intendedNodes.filter((node) =>
     observedLabels.has(normalizeArchitectureLabel(node.label)),
   );
