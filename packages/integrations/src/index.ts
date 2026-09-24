@@ -467,7 +467,7 @@ export class DockerEphemeralRunner implements IsolatedRunner {
     const child = spawn(dockerBinary, dockerArgs, {
       shell: false,
       stdio: ['ignore', 'pipe', 'pipe'],
-      env: { PATH: process.env.PATH ?? '' },
+      env: { PATH: process.env.PATH ?? '', NODE_ENV: process.env.NODE_ENV ?? 'production' },
     });
     let stdout = '',
       stderr = '',
