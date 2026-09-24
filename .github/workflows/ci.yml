@@ -32,6 +32,8 @@ jobs:
       - run: npm run build -w @launchproof/web
       - run: npm run build -w @launchproof/cli
       - run: npm pack -w @launchproof/cli --dry-run
+      - name: Runtime dependency audit
+        run: npm audit --omit=dev --audit-level=high
       - name: Controlled release scenarios
         run: |
           npm run cli -- analyze scenarios/production-reference --json /tmp/launchproof-reference.json
@@ -58,5 +60,27 @@ jobs:
       - name: Install browser for E2E
         run: npx playwright install --with-deps chromium
       - run: npm run test:e2e
+      - name: Docker Compose validation
+        run: docker compose config
       - name: Docker build
         run: docker build -t launchproof-ci .
+
+  windows-desktop:
+    name: windows desktop / node-24
+    runs-on: windows-latest
+    timeout-minutes: 35
+    needs: verify-runtime
+    steps:
+      - uses: actions/checkout@v4
+      - name: Dependency lock required
+        shell: pwsh
+        run: if (-not (Test-Path package-lock.json)) { throw 'package-lock.json is required for reproducible public CI' }
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - uses: dtolnay/rust-toolchain@stable
+      - run: npm ci --ignore-scripts
+      - name: Tauri desktop build
+        run: npm run build -w @launchproof/desktop
