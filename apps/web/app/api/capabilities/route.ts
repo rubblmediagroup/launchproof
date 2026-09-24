@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { localAnalysisCapability } from '../../lib/local-analysis';
+import { localAnalysisCapability } from '../../../lib/local-analysis';
 
 export async function GET() {
   return NextResponse.json(
