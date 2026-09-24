@@ -413,12 +413,8 @@ function DecisionExplainer({ report }: { report: AnalysisReport }) {
       </div>
       <div className="decision-list">
         {attention.slice(0, 8).map((item) => {
-          const evidence = report.evidence.filter((entry) =>
-            item.evidenceIds.includes(entry.id),
-          );
-          const findings = report.findings.filter((entry) =>
-            item.findingIds.includes(entry.id),
-          );
+          const evidence = report.evidence.filter((entry) => item.evidenceIds.includes(entry.id));
+          const findings = report.findings.filter((entry) => item.findingIds.includes(entry.id));
           return (
             <article key={item.control.id}>
               <header>
@@ -722,7 +718,10 @@ function SentenView({ report }: { report: AnalysisReport }) {
           <h3>{matchedNodes.length} intended component(s) observed</h3>
           <p>
             {matchedNodes.length
-              ? matchedNodes.map((node) => node.label).slice(0, 8).join(' · ')
+              ? matchedNodes
+                  .map((node) => node.label)
+                  .slice(0, 8)
+                  .join(' · ')
               : 'No intended component label currently correlates with an observed graph node.'}
           </p>
         </article>
@@ -731,7 +730,10 @@ function SentenView({ report }: { report: AnalysisReport }) {
           <h3>{intendedOnly.length} intended component(s) not observed</h3>
           <p>
             {intendedOnly.length
-              ? intendedOnly.map((node) => node.label).slice(0, 8).join(' · ')
+              ? intendedOnly
+                  .map((node) => node.label)
+                  .slice(0, 8)
+                  .join(' · ')
               : 'Every imported intended component has an observed label match.'}
           </p>
         </article>
@@ -740,7 +742,10 @@ function SentenView({ report }: { report: AnalysisReport }) {
           <h3>{observedOnly.length} observed component(s) not declared by Senten</h3>
           <p>
             {observedOnly.length
-              ? observedOnly.map((node) => node.label).slice(0, 8).join(' · ')
+              ? observedOnly
+                  .map((node) => node.label)
+                  .slice(0, 8)
+                  .join(' · ')
               : 'No additional observed components were found.'}
           </p>
         </article>

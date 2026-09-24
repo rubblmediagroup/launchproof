@@ -16,12 +16,9 @@ test('controlled regression comparison explains changed artifacts', async ({ pag
   await expect(page.getByText(/changed controls/i)).toBeVisible();
 });
 
-
 test('release decision explains uncertain and failed controls', async ({ page }) => {
   await page.goto('/');
-  await page
-    .locator('select')
-    .selectOption('missing-tenant-authorization');
+  await page.locator('select').selectOption('missing-tenant-authorization');
   await page.getByRole('button', { name: /start deterministic analysis/i }).click();
   await expect(page.getByText('WHY THIS DECISION')).toBeVisible();
   await expect(page.getByText(/release decisions remain traceable/i)).toBeVisible();

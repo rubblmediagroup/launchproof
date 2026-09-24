@@ -6,7 +6,9 @@ function readReport(path) {
 
 const [referencePath, regressionPath] = process.argv.slice(2);
 if (!referencePath || !regressionPath) {
-  console.error('Usage: node scripts/assert-release-scenarios.mjs <reference.json> <regression.json>');
+  console.error(
+    'Usage: node scripts/assert-release-scenarios.mjs <reference.json> <regression.json>',
+  );
   process.exit(3);
 }
 

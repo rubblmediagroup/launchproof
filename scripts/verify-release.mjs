@@ -144,4 +144,6 @@ if (withDocker) {
 console.log('');
 status('V1 BASELINE CHECKPOINT PASSED');
 status(`Evidence directory: ${logRoot}`);
-status('Next checkpoint: scanner ingestion, isolated-runner, desktop, Senten, and release-artifact verification.');
+status(
+  'Next checkpoint: scanner ingestion, isolated-runner, desktop, Senten, and release-artifact verification.',
+);
