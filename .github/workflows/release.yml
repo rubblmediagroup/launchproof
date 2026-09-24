@@ -26,6 +26,7 @@ jobs:
           node-version: ${{ matrix.node }}
           cache: npm
       - run: npm ci --ignore-scripts
+      - run: npm run check:version
       - run: npm run format:check
       - run: npm run lint
       - run: npm run typecheck
