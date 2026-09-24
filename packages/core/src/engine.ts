@@ -1,3 +1,4 @@
+import { LAUNCHPROOF_VERSION } from '@launchproof/contracts';
 import type {
   AnalysisProvenance,
   AnalysisReport,
@@ -69,7 +70,7 @@ export async function analyzeSnapshot(
   snapshot: RepositorySnapshot,
   policy: LaunchProofPolicyShape,
   analyzers: Analyzer[],
-  version = '1.0.0-rc.1',
+  version = LAUNCHPROOF_VERSION,
   options: {
     runner?: IsolatedRunner;
     authorizeDynamicVerification?: boolean;
