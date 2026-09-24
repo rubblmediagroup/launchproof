@@ -32,8 +32,13 @@ jobs:
       - run: npm run build -w @launchproof/web
       - run: npm run build -w @launchproof/cli
       - run: npm pack -w @launchproof/cli --dry-run
-      - name: CLI smoke test
-        run: npm run cli -- analyze scenarios/production-reference --json /tmp/launchproof-report.json
+      - name: Controlled release scenarios
+        run: |
+          npm run cli -- analyze scenarios/production-reference --json /tmp/launchproof-reference.json
+          npm run cli -- analyze scenarios/missing-tenant-authorization --json /tmp/launchproof-regression.json
+          npm run verify:scenarios -- /tmp/launchproof-reference.json /tmp/launchproof-regression.json
+      - name: LaunchProof self-analysis
+        run: npm run cli -- analyze . --json /tmp/launchproof-self.json
 
   release-surfaces:
     name: release surfaces / node-24
