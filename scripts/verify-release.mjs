@@ -14,7 +14,7 @@ const stamp = new Date().toISOString().replace(/[-:]/g, '').replace(/\..+/, '').
 const logRoot = join(root, '.launchproof', 'verification', stamp);
 mkdirSync(logRoot, { recursive: true });
 
-const status = (message) => console.log(`[LaunchProof RC] ${message}`);
+const status = (message) => console.log(`[LaunchProof 1.0 RC] ${message}`);
 const windowsCommandWrappers = new Set(['npm', 'npx']);
 
 function resolveInvocation(command, commandArgs) {
@@ -51,7 +51,7 @@ function runGate(name, command, commandArgs = []) {
   }
   const code = result.status ?? 1;
   if (code !== 0) {
-    console.error(`[LaunchProof RC] FAIL ${name} (exit ${code})`);
+    console.error(`[LaunchProof 1.0 RC] FAIL ${name} (exit ${code})`);
     console.error(`Log: ${logPath}`);
     process.exit(code);
   }
@@ -61,7 +61,7 @@ function runGate(name, command, commandArgs = []) {
 const major = Number(process.versions.node.split('.')[0]);
 if (![24, 26].includes(major)) {
   console.error(
-    `LaunchProof v0.2 RC verification supports Node 24.x (LTS baseline) or Node 26.x (forward-compatibility lane); found v${process.versions.node}.`,
+    `LaunchProof 1.0 RC verification supports Node 24.x (LTS baseline) or Node 26.x (forward-compatibility lane); found v${process.versions.node}.`,
   );
   process.exit(3);
 }
@@ -137,11 +137,11 @@ if (withE2E) {
 if (withDocker) {
   runGate('docker-version', 'docker', ['--version']);
   runGate('docker-compose-version', 'docker', ['compose', 'version']);
-  runGate('docker-build', 'docker', ['build', '-t', 'launchproof:0.2.0-rc', '.']);
+  runGate('docker-build', 'docker', ['build', '-t', 'launchproof:1.0.0-rc.1', '.']);
   runGate('docker-compose-config', 'docker', ['compose', 'config', '--quiet']);
 }
 
 console.log('');
-status('BASELINE CHECKPOINT PASSED');
+status('V1 BASELINE CHECKPOINT PASSED');
 status(`Evidence directory: ${logRoot}`);
-status('Next checkpoint: real scanner ingestion and isolated-runner verification.');
+status('Next checkpoint: scanner ingestion, isolated-runner, desktop, Senten, and release-artifact verification.');
